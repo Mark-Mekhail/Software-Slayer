@@ -1,0 +1,176 @@
+definitions:
+  skills.UpdateSkillRequest:
+    properties:
+      old_topic:
+        type: string
+      updated_topic:
+        type: string
+    type: object
+  user.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  user.Credentials:
+    properties:
+      identifier:
+        type: string
+      password:
+        type: string
+    type: object
+  user.GetUserResponse:
+    properties:
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login with an email and password
+      parameters:
+      - description: Credentials object that needs to be added
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/user.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login
+      tags:
+      - Users
+  /skill:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a skill for a user
+      parameters:
+      - description: Skill topic to delete
+        in: body
+        name: skill
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+      summary: Delete a skill
+      tags:
+      - Skills
+    get:
+      description: Get all skills for a user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Get skills by user id
+      tags:
+      - Skills
+    post:
+      consumes:
+      - application/json
+      description: Add a new skill for a user
+      parameters:
+      - description: Skill topic to add
+        in: body
+        name: skill
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Created
+      summary: Create a new skill
+      tags:
+      - Skills
+    put:
+      consumes:
+      - application/json
+      description: Update a skill for a user
+      parameters:
+      - description: Old and new skill topics
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/skills.UpdateSkillRequest'
+      responses:
+        "204":
+          description: No Content
+      summary: Update a skill
+      tags:
+      - Skills
+  /user:
+    get:
+      description: Get a filtered set of users
+      parameters:
+      - description: Get only the current user
+        in: query
+        name: current
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/user.GetUserResponse'
+            type: array
+      summary: Get users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with an email, password, and name
+      parameters:
+      - description: User object that needs to be added
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserRequest'
+      responses:
+        "201":
+          description: Created
+      summary: Create a new user
+      tags:
+      - Users
+swagger: "2.0"
