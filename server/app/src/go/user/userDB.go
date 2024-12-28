@@ -5,7 +5,7 @@ import (
 )
 
 func createUserDB(user *CreateUserRequest, passwordHash string) error {
-	_, err := db.Exec("INSERT INTO users (email, username, password_hash, first_name, last_name) VALUES (?, ?, ?, ?)", user.Email, user.Username, passwordHash, user.FirstName, user.LastName)
+	_, err := db.Exec("INSERT INTO users (email, username, password_hash, first_name, last_name) VALUES (?, ?, ?, ?, ?)", user.Email, user.Username, passwordHash, user.FirstName, user.LastName)
 	return err
 }
 

@@ -94,6 +94,12 @@ const docTemplate = `{
                 "summary": "Update a skill",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
                         "description": "Old and new skill topics",
                         "name": "skill",
                         "in": "body",
@@ -120,12 +126,21 @@ const docTemplate = `{
                 "summary": "Create a new skill",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
                         "description": "Skill topic to add",
                         "name": "skill",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/skills.CreateSkillRequest"
+                            }
                         }
                     }
                 ],
@@ -146,12 +161,18 @@ const docTemplate = `{
                 "summary": "Delete a skill",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
                         "description": "Skill topic to delete",
                         "name": "skill",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/skills.DeleteSkillRequest"
                         }
                     }
                 ],
@@ -173,6 +194,12 @@ const docTemplate = `{
                 ],
                 "summary": "Get users",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
                     {
                         "type": "boolean",
                         "description": "Get only the current user",
@@ -221,6 +248,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "skills.CreateSkillRequest": {
+            "type": "object",
+            "properties": {
+                "topic": {
+                    "type": "string"
+                }
+            }
+        },
+        "skills.DeleteSkillRequest": {
+            "type": "object",
+            "properties": {
+                "topic": {
+                    "type": "string"
+                }
+            }
+        },
         "skills.UpdateSkillRequest": {
             "type": "object",
             "properties": {

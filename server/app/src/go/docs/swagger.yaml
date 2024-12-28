@@ -1,4 +1,14 @@
 definitions:
+  skills.CreateSkillRequest:
+    properties:
+      topic:
+        type: string
+    type: object
+  skills.DeleteSkillRequest:
+    properties:
+      topic:
+        type: string
+    type: object
   skills.UpdateSkillRequest:
     properties:
       old_topic:
@@ -70,12 +80,16 @@ paths:
       - application/json
       description: Delete a skill for a user
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       - description: Skill topic to delete
         in: body
         name: skill
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/skills.DeleteSkillRequest'
       responses:
         "204":
           description: No Content
@@ -107,12 +121,18 @@ paths:
       - application/json
       description: Add a new skill for a user
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       - description: Skill topic to add
         in: body
         name: skill
         required: true
         schema:
-          type: string
+          items:
+            $ref: '#/definitions/skills.CreateSkillRequest'
+          type: array
       responses:
         "201":
           description: Created
@@ -124,6 +144,10 @@ paths:
       - application/json
       description: Update a skill for a user
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       - description: Old and new skill topics
         in: body
         name: skill
@@ -140,6 +164,10 @@ paths:
     get:
       description: Get a filtered set of users
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
       - description: Get only the current user
         in: query
         name: current

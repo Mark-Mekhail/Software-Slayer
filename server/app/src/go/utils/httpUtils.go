@@ -9,7 +9,7 @@ import (
 )
 
 func Decode[T any](w http.ResponseWriter, r *http.Request, v *T) error {
-	err := json.NewDecoder(r.Body).Decode(v)
+	err := json.NewDecoder(r.Body).Decode(&v)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

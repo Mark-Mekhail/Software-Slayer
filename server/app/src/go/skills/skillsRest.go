@@ -12,12 +12,13 @@ import (
 // @Description Add a new skill for a user
 // @Tags Skills
 // @Accept json
-// @Param skill body string true "Skill topic to add"
+// @Param Authorization header string false "Bearer token"
+// @Param skill body CreateSkillRequest true "Skill topic to add"
 // @Success 201
 // @Router /skill [post]
 func createSkill(w http.ResponseWriter, r *http.Request) {
-	var topic string
-	if err := utils.Decode(w, r, &topic); err != nil {
+	var createSkillRequest CreateSkillRequest
+	if err := utils.Decode(w, r, &createSkillRequest); err != nil {
 		return
 	}
 
@@ -27,7 +28,7 @@ func createSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = createSkillDB(userId, topic)
+	err = createSkillDB(userId, createSkillRequest.Topic)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -40,12 +41,13 @@ func createSkill(w http.ResponseWriter, r *http.Request) {
 // @Description Delete a skill for a user
 // @Tags Skills
 // @Accept json
-// @Param skill body string true "Skill topic to delete"
+// @Param Authorization header string false "Bearer token"
+// @Param skill body DeleteSkillRequest true "Skill topic to delete"
 // @Success 204
 // @Router /skill [delete]
 func deleteSkill(w http.ResponseWriter, r *http.Request) {
-	var topic string
-	if err := utils.Decode(w, r, &topic); err != nil {
+	var deleteSkillRequest DeleteSkillRequest
+	if err := utils.Decode(w, r, &deleteSkillRequest); err != nil {
 		return
 	}
 
@@ -55,7 +57,7 @@ func deleteSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = deleteSkillDB(userId, topic)
+	err = deleteSkillDB(userId, deleteSkillRequest.Topic)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -68,6 +70,7 @@ func deleteSkill(w http.ResponseWriter, r *http.Request) {
 // @Description Update a skill for a user
 // @Tags Skills
 // @Accept json
+// @Param Authorization header string false "Bearer token"
 // @Param skill body UpdateSkillRequest true "Old and new skill topics"
 // @Success 204
 // @Router /skill [put]

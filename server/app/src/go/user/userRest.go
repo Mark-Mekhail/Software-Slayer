@@ -76,6 +76,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 // @Description Get a filtered set of users
 // @Tags Users
 // @Produce json
+// @Param Authorization header string false "Bearer token"
 // @Param current query bool false "Get only the current user"
 // @Success 200 {array} GetUserResponse
 // @Router /user [get]
