@@ -2,8 +2,8 @@ package user
 
 type UserBase struct {
 	Username  string `json:"username"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 type UserDB struct {

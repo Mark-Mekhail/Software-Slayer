@@ -1,7 +1,7 @@
 package skills
 
 type SkillDB struct {
-	UserID int    `json:"user_id"`
+	UserID int    `json:"userId"`
 	Topic  string `json:"topic"`
 }
 
@@ -14,6 +14,6 @@ type DeleteSkillRequest struct {
 }
 
 type UpdateSkillRequest struct {
-	OldTopic    string `json:"old_topic"`
-	UpdatedTopic string `json:"updated_topic"`
+	OldTopic    string `json:"oldTopic"`
+	UpdatedTopic string `json:"updatedTopic"`
 }
