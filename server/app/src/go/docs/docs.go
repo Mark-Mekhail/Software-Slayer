@@ -43,10 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/user.LoginResponse"
                         }
                     }
                 }
@@ -137,10 +134,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/skills.CreateSkillRequest"
-                            }
+                            "$ref": "#/definitions/skills.CreateSkillRequest"
                         }
                     }
                 ],
@@ -267,10 +261,10 @@ const docTemplate = `{
         "skills.UpdateSkillRequest": {
             "type": "object",
             "properties": {
-                "old_topic": {
+                "oldTopic": {
                     "type": "string"
                 },
-                "updated_topic": {
+                "updatedTopic": {
                     "type": "string"
                 }
             }
@@ -306,6 +300,26 @@ const docTemplate = `{
                 }
             }
         },
+        "user.GetCurrentUserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "user.GetUserResponse": {
             "type": "object",
             "properties": {
@@ -320,6 +334,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "user.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_info": {
+                    "$ref": "#/definitions/user.GetCurrentUserResponse"
                 }
             }
         }

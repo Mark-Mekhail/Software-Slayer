@@ -2,8 +2,8 @@ package user
 
 type UserBase struct {
 	Username  string `json:"username"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 }
 
 type UserDB struct {
@@ -32,4 +32,9 @@ type CreateUserRequest struct {
 type Credentials struct {
 	Identifier string `json:"identifier"`
 	Password   string `json:"password"`
+}
+
+type LoginResponse struct {
+	Token string                    `json:"token"`
+	UserInfo GetCurrentUserResponse `json:"user_info"`
 }

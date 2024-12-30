@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const BASE_URL = 'localhost:8080';
+const BASE_URL = 'http://localhost:8080';
 
 // Generic function for GET requests with query parameters and optional JSON body
 async function getRequest<T>(

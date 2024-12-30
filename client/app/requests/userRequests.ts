@@ -7,11 +7,23 @@ function createUser(
   username: string,
   password: string
 ) {
-  return apiRequests.postRequest('/users', {
+  return apiRequests.postRequest('/user', {
     email,
-    firstName,
-    lastName,
+    "first_name": firstName,
+    "last_name": lastName,
     username,
     password,
   });
 }
+
+function login(identifier: string, password: string) {
+  return apiRequests.postRequest('/login', {
+    identifier,
+    password,
+  });
+}
+
+export const userRequests = {
+  createUser,
+  login,
+};

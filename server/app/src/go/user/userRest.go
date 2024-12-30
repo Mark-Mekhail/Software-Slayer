@@ -43,7 +43,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param credentials body Credentials true "Credentials object that needs to be added"
-// @Success 200 {object} map[string]string
+// @Success 200 {object} LoginResponse
 // @Router /login [post]
 func handleLogin(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
@@ -69,7 +69,17 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	loginResponse := LoginResponse{
+		Token: token,
+		UserInfo: GetCurrentUserResponse{
+			Email: user.Email,
+			GetUserResponse: GetUserResponse{
+				ID:       user.ID,
+				UserBase: user.UserBase,
+			},
+		},
+	}
+	json.NewEncoder(w).Encode(loginResponse)
 }
 
 // @Summary Get users

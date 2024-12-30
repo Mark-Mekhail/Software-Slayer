@@ -11,9 +11,9 @@ definitions:
     type: object
   skills.UpdateSkillRequest:
     properties:
-      old_topic:
+      oldTopic:
         type: string
-      updated_topic:
+      updatedTopic:
         type: string
     type: object
   user.CreateUserRequest:
@@ -36,6 +36,19 @@ definitions:
       password:
         type: string
     type: object
+  user.GetCurrentUserResponse:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      username:
+        type: string
+    type: object
   user.GetUserResponse:
     properties:
       first_name:
@@ -46,6 +59,13 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  user.LoginResponse:
+    properties:
+      token:
+        type: string
+      user_info:
+        $ref: '#/definitions/user.GetCurrentUserResponse'
     type: object
 info:
   contact: {}
@@ -68,9 +88,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/user.LoginResponse'
       summary: Login
       tags:
       - Users
@@ -130,9 +148,7 @@ paths:
         name: skill
         required: true
         schema:
-          items:
-            $ref: '#/definitions/skills.CreateSkillRequest'
-          type: array
+          $ref: '#/definitions/skills.CreateSkillRequest'
       responses:
         "201":
           description: Created

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+
+import { userRequests } from '../requests/userRequests';
 
 interface RegisterScreenProps {
   navigation: {
@@ -14,11 +16,19 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const [lastName, setLastName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const handleRegister = async (): Promise<void> => {
+  const handleRegister = () => {
     if (!email || !username || !firstName || !lastName || !password) {
       Alert.alert('Error', 'Please fill out all fields.');
       return;
     }
+
+    userRequests.createUser(email, firstName, lastName, username, password)
+      .then(() => {
+        navigation.navigate('Login');
+      })
+      .catch(() => {
+        Alert.alert('Error', 'An error occurred. Please try again.');
+      });
   };
 
   return (
@@ -66,6 +76,15 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.linkButton}
+        onPress={() =>
+          navigation.navigate('Login')
+        }
+      >
+        <Text style={styles.linkText}>Already have an account? Log in</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -103,5 +122,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  linkButton: {
+    marginTop: 15,
+  },
+  linkText: {
+    color: '#007BFF',
+    textDecorationLine: 'underline',
   },
 });
