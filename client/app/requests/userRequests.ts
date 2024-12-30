@@ -7,7 +7,7 @@ function createUser(
   username: string,
   password: string
 ) {
-  return apiRequests.postRequest('/user', {
+  return apiRequests.postRequest('/user', null, {
     email,
     "first_name": firstName,
     "last_name": lastName,
@@ -17,7 +17,7 @@ function createUser(
 }
 
 function login(identifier: string, password: string) {
-  return apiRequests.postRequest('/login', {
+  return apiRequests.postRequest('/login', null, {
     identifier,
     password,
   });

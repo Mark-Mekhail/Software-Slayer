@@ -1,7 +1,8 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { useContext } from 'react';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
 
 import { UserContext } from '../common/UserContext';
+import { skillRequests } from '../requests/skillRequests';
 
 export default function HomeScreen() {
   const userContext = useContext(UserContext);
@@ -10,11 +11,26 @@ export default function HomeScreen() {
   }
   const { user, setUser } = userContext;
 
-  console.log('user:', user);
+  const [skills, setSkills] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!user) {
+      throw new Error('User is not set');
+    }
+
+    skillRequests.getSkills(user.token, user.id).then((topics) => {
+      setSkills(topics);
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
       {<Text style={styles.title}>Welcome, {user?.firstName}!</Text>}
+      <ScrollView>
+        {skills.map((skill, index) => (
+          <Text key={index}>{skill}</Text>
+        ))}
+      </ScrollView>
     </View>
   );
 }

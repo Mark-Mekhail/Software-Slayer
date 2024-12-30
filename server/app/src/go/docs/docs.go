@@ -50,36 +50,6 @@ const docTemplate = `{
             }
         },
         "/skill": {
-            "get": {
-                "description": "Get all skills for a user",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Skills"
-                ],
-                "summary": "Get skills by user id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
             "put": {
                 "description": "Update a skill for a user",
                 "consumes": [
@@ -143,7 +113,9 @@ const docTemplate = `{
                         "description": "Created"
                     }
                 }
-            },
+            }
+        },
+        "/skill/:topic": {
             "delete": {
                 "description": "Delete a skill for a user",
                 "consumes": [
@@ -161,18 +133,48 @@ const docTemplate = `{
                         "in": "header"
                     },
                     {
+                        "type": "string",
                         "description": "Skill topic to delete",
-                        "name": "skill",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/skills.DeleteSkillRequest"
-                        }
+                        "name": "topic",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/skill/{user_id}": {
+            "get": {
+                "description": "Get all skills for a user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Skills"
+                ],
+                "summary": "Get skills by user id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
@@ -243,14 +245,6 @@ const docTemplate = `{
     },
     "definitions": {
         "skills.CreateSkillRequest": {
-            "type": "object",
-            "properties": {
-                "topic": {
-                    "type": "string"
-                }
-            }
-        },
-        "skills.DeleteSkillRequest": {
             "type": "object",
             "properties": {
                 "topic": {

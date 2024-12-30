@@ -6,6 +6,7 @@ import (
 	"software-slayer/auth"
 	"software-slayer/utils"
 	"strconv"
+	"strings"
 )
 
 // @Summary Create a new skill
@@ -42,14 +43,11 @@ func createSkill(w http.ResponseWriter, r *http.Request) {
 // @Tags Skills
 // @Accept json
 // @Param Authorization header string false "Bearer token"
-// @Param skill body DeleteSkillRequest true "Skill topic to delete"
+// @Param topic path string true "Skill topic to delete"
 // @Success 204
-// @Router /skill [delete]
+// @Router /skill/:topic [delete]
 func deleteSkill(w http.ResponseWriter, r *http.Request) {
-	var deleteSkillRequest DeleteSkillRequest
-	if err := utils.Decode(w, r, &deleteSkillRequest); err != nil {
-		return
-	}
+	topic := strings.TrimPrefix(r.URL.Path, "/skill/")
 
 	userId, err := auth.AuthorizeUser(r);
 	if err != nil {
@@ -57,7 +55,7 @@ func deleteSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = deleteSkillDB(userId, deleteSkillRequest.Topic)
+	err = deleteSkillDB(userId, topic)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -99,11 +97,11 @@ func updateSkill (w http.ResponseWriter, r *http.Request) {
 // @Description Get all skills for a user
 // @Tags Skills
 // @Produce json
-// @Param user_id query int true "User ID"
+// @Param user_id path int true "User ID"
 // @Success 200 {array} string
-// @Router /skill [get]
+// @Router /skill/{user_id} [get]
 func getSkillsByUserId(w http.ResponseWriter, r *http.Request) {
-	userID, err := strconv.Atoi(r.URL.Query().Get("user_id"))
+	userID, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/skill/"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -118,21 +116,9 @@ func getSkillsByUserId(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(skills)
 }
 
-func handleSkills(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		createSkill(w, r)
-	case http.MethodDelete:
-		deleteSkill(w, r)
-	case http.MethodGet:
-		getSkillsByUserId(w, r)
-	case http.MethodPut:
-		updateSkill(w, r)
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
-
 func InitSkillRoutes() {
-	http.HandleFunc("/skill", handleSkills)
+	http.HandleFunc("GET /skill/", getSkillsByUserId)
+	http.HandleFunc("POST /skill", createSkill)
+	http.HandleFunc("DELETE /skill/", deleteSkill)
+	http.HandleFunc("PUT /skill", updateSkill)
 }

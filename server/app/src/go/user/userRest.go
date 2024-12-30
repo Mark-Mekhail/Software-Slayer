@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"software-slayer/auth"
@@ -134,18 +133,8 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func handleUser(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		createUser(w, r)
-	case http.MethodGet:
-		getUsers(w, r)
-	default:
-		http.Error(w, fmt.Sprintf("Method %s not allowed", r.Method), http.StatusMethodNotAllowed)
-	}
-}
-
 func InitUserRoutes() {
-	http.HandleFunc("/user", handleUser)
-	http.HandleFunc("/login", handleLogin)
+	http.HandleFunc("POST /user", createUser)
+	http.HandleFunc("GET /user", getUsers)
+	http.HandleFunc("POST /login", handleLogin)
 }
