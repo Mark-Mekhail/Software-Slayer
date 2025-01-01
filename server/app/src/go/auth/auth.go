@@ -37,19 +37,14 @@ func AuthorizeUser(r *http.Request) (int, error) {
 		log.Println("invalid claims")
 		return -1, errors.New("invalid claims")
 	}
+
 	userId, ok := claims["user_id"]
 	if !ok {
 		log.Println("claims missing user_id")
 		return -1, errors.New("invalid claims")
 	}
 
-	userIdInt, ok := userId.(int)
-	if !ok {
-		log.Println("user_id is not an int")
-		return -1, errors.New("invalid claims")
-	}
-
-	return userIdInt, nil
+	return int(userId.(float64)), nil
 }
 
 /*
