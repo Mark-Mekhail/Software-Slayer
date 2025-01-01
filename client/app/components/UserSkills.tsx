@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../common/UserContext';
 import { skillRequests } from '../requests/skillRequests';
 
-export default function HomeScreen() {
+export default function UserSkills() {
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error('UserContext is not set');

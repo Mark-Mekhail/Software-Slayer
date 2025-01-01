@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           lastName: res.user_info.last_name,
           token: res.token,
         });
-        navigation.navigate('Home');
+        navigation.navigate('UserSkills');
       })
       .catch(() => {
         Alert.alert('Error', 'An error occurred. Please try again.');
