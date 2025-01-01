@@ -99,6 +99,11 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+ * getCurrentUser gets the current user from the database and returns it as a response.
+ * @param w: the response writer
+ * @param r: the request
+ */
 func getCurrentUser(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.AuthorizeUser(r)
 
@@ -123,6 +128,11 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(currentUserResponse)
 }
 
+/*
+ * getAllUsers gets all users from the database and returns them as a response.
+ * @param w: the response writer
+ * @param r: the request
+ */
 func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := getUsersDB()
 	if err != nil {
@@ -133,6 +143,9 @@ func getAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
+/*
+ * InitUserRoutes initializes the user routes.
+ */
 func InitUserRoutes() {
 	http.HandleFunc("POST /user", createUser)
 	http.HandleFunc("GET /user", getUsers)

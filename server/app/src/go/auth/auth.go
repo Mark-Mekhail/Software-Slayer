@@ -12,6 +12,7 @@ import (
 
 // TODO: Make this more secure
 var jwtSecret = []byte("secret")
+
 const TOKEN_EXPIRATION = time.Hour * 24
 
 /*
@@ -81,7 +82,7 @@ func ValidatePassword(password, hash string) error {
 func GenerateToken(id int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": id,
-		"exp": jwt.TimeFunc().Add(TOKEN_EXPIRATION).Unix(),
+		"exp":     jwt.TimeFunc().Add(TOKEN_EXPIRATION).Unix(),
 	})
 	return token.SignedString(jwtSecret)
 }

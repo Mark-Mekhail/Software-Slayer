@@ -23,7 +23,7 @@ func createSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, err := auth.AuthorizeUser(r);
+	userId, err := auth.AuthorizeUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -49,7 +49,7 @@ func createSkill(w http.ResponseWriter, r *http.Request) {
 func deleteSkill(w http.ResponseWriter, r *http.Request) {
 	topic := strings.TrimPrefix(r.URL.Path, "/skill/")
 
-	userId, err := auth.AuthorizeUser(r);
+	userId, err := auth.AuthorizeUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -72,13 +72,13 @@ func deleteSkill(w http.ResponseWriter, r *http.Request) {
 // @Param skill body UpdateSkillRequest true "Old and new skill topics"
 // @Success 204
 // @Router /skill [put]
-func updateSkill (w http.ResponseWriter, r *http.Request) {
+func updateSkill(w http.ResponseWriter, r *http.Request) {
 	var skill UpdateSkillRequest
 	if err := utils.Decode(w, r, &skill); err != nil {
 		return
 	}
 
-	userId, err := auth.AuthorizeUser(r);
+	userId, err := auth.AuthorizeUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -116,6 +116,9 @@ func getSkillsByUserId(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(skills)
 }
 
+/*
+ * InitSkillRoutes initializes the skill routes.
+ */
 func InitSkillRoutes() {
 	http.HandleFunc("GET /skill/", getSkillsByUserId)
 	http.HandleFunc("POST /skill", createSkill)

@@ -5,19 +5,22 @@ import (
 	"net/http"
 
 	"software-slayer/db"
-	"software-slayer/user"
-	"software-slayer/skills"
 	_ "software-slayer/docs"
+	"software-slayer/skills"
+	"software-slayer/user"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+/*
+ * Manage the database connection and start the server
+ */
 func main() {
 	db.Open()
 	defer db.Close()
 
 	http.Handle("/swagger/", httpSwagger.WrapHandler)
-	
+
 	user.InitUserRoutes()
 	skills.InitSkillRoutes()
 

@@ -14,7 +14,7 @@ type UserDB struct {
 }
 
 type GetUserResponse struct {
-	ID 			 int `json:"id"`
+	ID int `json:"id"`
 	UserBase
 }
 
@@ -35,6 +35,6 @@ type Credentials struct {
 }
 
 type LoginResponse struct {
-	Token string                    `json:"token"`
+	Token    string                 `json:"token"`
 	UserInfo GetCurrentUserResponse `json:"user_info"`
 }
