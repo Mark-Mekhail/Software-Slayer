@@ -7,12 +7,16 @@ import { apiRequests } from "./apiRequests";
  * @returns the response data from the request
  * @throws an error if the request fails
  */
-function createSkill(authToken: string, topic: string) {
-  return apiRequests.postRequest(
+async function createSkill(authToken: string, topic: string): Promise<void> {
+  const response = await apiRequests.postRequest(
     '/skill', 
     { Authorization: authToken }, 
     { topic }
   );
+
+  if (!response.ok) {
+    throw new Error('Failed to add skill');
+  }
 };
 
 /*
@@ -23,8 +27,8 @@ function createSkill(authToken: string, topic: string) {
  * @returns the response data from the request
  * @throws an error if the request fails
  */
-function updateSkill(authToken: string, oldTopic: string, newTopic: string) {
-  return apiRequests.putRequest(
+async function updateSkill(authToken: string, oldTopic: string, newTopic: string): Promise<void> {
+  const response = await apiRequests.putRequest(
     '/skill', 
     { Authorization: authToken }, 
     {
@@ -32,6 +36,10 @@ function updateSkill(authToken: string, oldTopic: string, newTopic: string) {
       newTopic,
     }
   );
+
+  if (!response.ok) {
+    throw new Error('Failed to update skill');
+  }
 };
 
 /*
@@ -41,11 +49,15 @@ function updateSkill(authToken: string, oldTopic: string, newTopic: string) {
  * @returns the response data from the request
  * @throws an error if the request fails
  */
-function deleteSkill(authToken: string, topic: string) {
-  return apiRequests.deleteRequest(
+async function deleteSkill(authToken: string, topic: string): Promise<void> {
+  const response = await apiRequests.deleteRequest(
     `/skill/${topic}`,
     { Authorization: authToken }
   );
+
+  if (!response.ok) {
+    throw new Error('Failed to remove skill');
+  }
 };
 
 /*
@@ -55,8 +67,14 @@ function deleteSkill(authToken: string, topic: string) {
  * @returns the response data from the request
  * @throws an error if the request fails
  */
-function getSkills(authToken: string, userId: number): Promise<string[]> {
-  return apiRequests.getRequest(`/skill/${userId}`, { Authorization: authToken });
+async function getSkills(authToken: string, userId: number): Promise<string[]> {
+  const response = await apiRequests.getRequest(`/skill/${userId}`, { Authorization: authToken });
+
+  if (!response.ok) {
+    throw new Error('Failed to get skills');
+  }
+
+  return response.json();
 }
 
 export const skillRequests = {

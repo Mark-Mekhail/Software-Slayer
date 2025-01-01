@@ -10,20 +10,24 @@ import { apiRequests } from "./apiRequests";
  * @returns the response data from the request
  * @throws an error if the request fails
  */
-function createUser(
+async function createUser(
   email: string,
   firstName: string,
   lastName: string,
   username: string,
   password: string
-) {
-  return apiRequests.postRequest('/user', null, {
+): Promise<void> {
+  const response = await apiRequests.postRequest('/user', null, {
     email,
     "first_name": firstName,
     "last_name": lastName,
     username,
     password,
   });
+
+  if (!response.ok) {
+    throw new Error('Failed to create user');
+  }
 }
 
 /*
@@ -33,11 +37,17 @@ function createUser(
  * @returns the response data from the request
  * @throws an error if the request fails
  */
-function login(identifier: string, password: string) {
-  return apiRequests.postRequest('/login', null, {
+async function login(identifier: string, password: string): Promise<object> {
+  const response = await apiRequests.postRequest('/login', null, {
     identifier,
     password,
   });
+
+  if (!response.ok) {
+    throw new Error('Failed to log in');
+  }
+
+  return response.json();
 }
 
 export const userRequests = {
