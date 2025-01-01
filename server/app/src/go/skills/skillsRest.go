@@ -45,7 +45,7 @@ func createSkill(w http.ResponseWriter, r *http.Request) {
 // @Param Authorization header string false "Bearer token"
 // @Param topic path string true "Skill topic to delete"
 // @Success 204
-// @Router /skill/:topic [delete]
+// @Router /skill/{topic} [delete]
 func deleteSkill(w http.ResponseWriter, r *http.Request) {
 	topic := strings.TrimPrefix(r.URL.Path, "/skill/")
 

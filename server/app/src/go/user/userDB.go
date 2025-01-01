@@ -27,7 +27,7 @@ func getUsersDB() ([]GetUserResponse, error) {
 	}
 	defer rows.Close()
 
-	users := []GetUserResponse{}
+	users := make([]GetUserResponse, 0)
 	for rows.Next() {
 		var user GetUserResponse
 		err := rows.Scan(&user.ID, &user.Username, &user.FirstName, &user.LastName)

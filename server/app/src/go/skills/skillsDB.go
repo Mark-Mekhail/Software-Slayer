@@ -51,7 +51,7 @@ func getSkillTopicsByUserIdDB(userID int) ([]string, error) {
 	}
 	defer rows.Close()
 
-	var skills []string
+	skills := make([]string, 0)
 	for rows.Next() {
 		var skill string
 		if err := rows.Scan(&skill); err != nil {
