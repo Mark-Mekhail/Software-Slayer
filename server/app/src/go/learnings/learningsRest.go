@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-var categoriesList []string
-
 // @Summary Create a new learning item
 // @Description Add a new learning item for a user
 // @Tags Learning Items
@@ -124,11 +122,6 @@ func getLearningItemCategories(w http.ResponseWriter, r *http.Request) {
  * InitLearningRoutes initializes the learning routes.
  */
 func InitLearningRoutes() {
-	categoriesList = make([]string, 0, len(categoriesMap))
-	for category := range categoriesMap {
-		categoriesList = append(categoriesList, category)
-	}
-
 	http.HandleFunc("GET /learning/", getLearningItemsByUserId)
 	http.HandleFunc("GET /learning/categories", getLearningItemCategories)
 	http.HandleFunc("POST /learning", createLearningItem)

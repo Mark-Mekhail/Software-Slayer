@@ -14,7 +14,14 @@ const (
 )
 
 var titleValidator = regexp.MustCompile(`^.{1,100}$`)
-var categoriesMap = map[string]struct{}{ Languages: {}, Technologies: {}, Concepts: {}, Projects: {}, Other: {} }
+var categoriesList = []string{Languages, Technologies, Concepts, Projects, Other}
+var categoriesMap = map[string]struct{}{
+	Languages:    {},
+	Technologies: {},
+	Concepts:     {},
+	Projects:     {},
+	Other:        {},
+}
 
 type LearningBase struct {
 	Title string    `json:"title"`
