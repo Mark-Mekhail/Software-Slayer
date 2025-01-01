@@ -125,6 +125,7 @@ export default function UserLearnings() {
             </TouchableOpacity>
           </View>
         )}
+        stickySectionHeadersEnabled={false}
         style={styles.list}
       />
     </View>
@@ -133,8 +134,8 @@ export default function UserLearnings() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: '100%',
-    display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
   },
@@ -144,8 +145,8 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   list: {
+    flex: 1,
     width: '90%',
-    display: 'flex',
     flexDirection: 'column',
   },
   header: {
@@ -160,7 +161,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footer: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -175,13 +175,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   addButton: {
-    backgroundColor: '#007BFF',
-    paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 5,
   },
   addButtonText: {
-    color: '#fff',
+    color: 'blue',
     fontWeight: 'bold',
   },
   deleteButton: {
