@@ -4,16 +4,24 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// TODO: Make this more secure
-var jwtSecret = []byte("secret")
-
+var jwtSecret []byte;
 const TOKEN_EXPIRATION = time.Hour * 24
+
+func InitAuth() {
+	secret, err := os.ReadFile(os.Getenv("JWT_SECRET_FILE"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jwtSecret = secret
+}
 
 /*
  * AuthorizeUser checks if the token in the http request authorization header is valid and returns the user id corresponding to the token

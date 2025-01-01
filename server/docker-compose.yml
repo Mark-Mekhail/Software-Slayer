@@ -3,10 +3,13 @@ services:
     image: mysql:latest
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: software-slayer-db
-      MYSQL_USER: software-slayer
-      MYSQL_PASSWORD: software-slayer-password
+      MYSQL_USER: ${MYSQL_USER:-software-slayer}
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - mysql_password
+      - mysql_root_password
     ports:
       - "3306:3306"
     volumes:
@@ -16,8 +19,25 @@ services:
   software-slayer-server:
     image: software-slayer-server
     container_name: software-slayer-server
+    environment:
+      DB_ADDRESS: "mysql:3306"
+      DB_NAME: software-slayer-db
+      DB_USER: ${MYSQL_USER:-software-slayer}
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      DB_PASSWORD_FILE: /run/secrets/mysql_password
+    secrets:
+      - jwt_secret
+      - mysql_password
     ports:
       - "8080:8080"
     
 volumes:
   mysql:
+
+secrets:
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt
+  mysql_password:
+    file: ./secrets/mysql_password.txt

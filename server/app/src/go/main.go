@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"software-slayer/auth"
 	"software-slayer/db"
 	_ "software-slayer/docs"
 	"software-slayer/learnings"
@@ -16,6 +17,8 @@ import (
  * Manage the database connection and start the server
  */
 func main() {
+	auth.InitAuth()
+
 	db.Open()
 	defer db.Close()
 
