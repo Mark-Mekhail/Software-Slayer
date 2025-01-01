@@ -1,6 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
-
-// TODO: Update BASE_URL to the correct URL for the backend API server
 const BASE_URL = 'http://localhost:8080';
 
 /*
@@ -12,8 +9,11 @@ const BASE_URL = 'http://localhost:8080';
  */
 async function getRequest<T>(endpoint: string, headers?: any): Promise<T> {
   try {
-    const response: AxiosResponse<T> = await axios.get(`${BASE_URL}${endpoint}`, { headers });
-    return response.data;
+    const response = await fetch(`${BASE_URL}${endpoint}`, { headers });
+    if (!response.ok) {
+      throw new Error('GET request failed');
+    }
+    return await response.json();
   } catch (error) {
     console.error('GET request error:', error);
     throw error;
@@ -30,8 +30,16 @@ async function getRequest<T>(endpoint: string, headers?: any): Promise<T> {
  */
 async function postRequest<T>(endpoint: string, headers?: any, payload?: any): Promise<T> {
   try {
-    const response: AxiosResponse<T> = await axios.post(`${BASE_URL}${endpoint}`, payload, { headers });
-    return response.data;
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error('POST request failed');
+    }
+
+    return await response.json();
   } catch (error) {
     console.error('POST request error:', error);
     throw error;
@@ -48,8 +56,15 @@ async function postRequest<T>(endpoint: string, headers?: any, payload?: any): P
  */
 async function putRequest<T>(endpoint: string, headers?: any, payload?: any): Promise<T> {
   try {
-    const response: AxiosResponse<T> = await axios.put(`${BASE_URL}${endpoint}`, payload, { headers });
-    return response.data;
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error('PUT request failed');
+    }
+    return await response.json();
   } catch (error) {
     console.error('PUT request error:', error);
     throw error;
@@ -65,8 +80,14 @@ async function putRequest<T>(endpoint: string, headers?: any, payload?: any): Pr
  */
 async function deleteRequest<T>(endpoint: string, headers?: any) {
   try {
-    const response: AxiosResponse<T> = await axios.delete(`${BASE_URL}${endpoint}`, { headers });
-    return response.data;
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers,
+    });
+    if (!response.ok) {
+      throw new Error('DELETE request failed');
+    }
+    return await response.json();
   } catch (error) {
     console.error('DELETE request error:', error);
     throw error;
@@ -79,4 +100,3 @@ export const apiRequests = {
   putRequest,
   deleteRequest,
 };
-
