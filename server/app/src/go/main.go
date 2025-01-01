@@ -6,7 +6,7 @@ import (
 
 	"software-slayer/db"
 	_ "software-slayer/docs"
-	"software-slayer/skills"
+	"software-slayer/learnings"
 	"software-slayer/user"
 
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -22,7 +22,7 @@ func main() {
 	http.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	user.InitUserRoutes()
-	skills.InitSkillRoutes()
+	learnings.InitLearningRoutes()
 
 	log.Println("Starting server on port 8080")
 	http.ListenAndServe(":8080", nil)

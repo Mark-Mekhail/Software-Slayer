@@ -8,8 +8,10 @@ CREATE TABLE users (
 );
 
 CREATE TABLE user_learning_list (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT UNSIGNED NOT NULL,
-  topic VARCHAR(255) NOT NULL,
-  PRIMARY KEY (user_id, topic),
+  title VARCHAR(255) NOT NULL,
+  category ENUM('Languages', 'Technologies', 'Concepts', 'Projects', 'Other') NOT NULL,
+  UNIQUE (user_id, title, category),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
