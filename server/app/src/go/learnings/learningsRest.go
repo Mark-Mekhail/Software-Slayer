@@ -102,11 +102,22 @@ func getLearningItemsByUserId(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(skills)
 }
 
+// @Summary Get learning item categories
+// @Description Get all learning item categories
+// @Tags Learning Items
+// @Produce json
+// @Success 200 {array} string
+// @Router /learning/categories [get]
+func getLearningItemCategories(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(categories)
+}
+
 /*
  * InitLearningRoutes initializes the learning routes.
  */
 func InitLearningRoutes() {
 	http.HandleFunc("GET /learning/", getLearningItemsByUserId)
+	http.HandleFunc("GET /learning/categories", getLearningItemCategories)
 	http.HandleFunc("POST /learning", createLearningItem)
 	http.HandleFunc("DELETE /learning/", deleteLearningItem)
 }

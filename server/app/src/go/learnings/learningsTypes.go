@@ -8,6 +8,8 @@ const (
 	Other        = "Other"
 )
 
+var categories = []string{Languages, Technologies, Concepts, Projects, Other}
+
 type LearningBase struct {
 	Title string    `json:"title"`
 	Category string `json:"category"`
