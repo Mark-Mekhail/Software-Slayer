@@ -2,7 +2,9 @@ package user
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"software-slayer/auth"
 	"software-slayer/utils"
@@ -18,6 +20,11 @@ import (
 func createUser(w http.ResponseWriter, r *http.Request) {
 	var user CreateUserRequest
 	if err := utils.Decode(w, r, &user); err != nil {
+		return
+	}
+
+	if err := validateCreateUserRequest(user); err != nil {
+		http.Error(w, fmt.Sprintf("Invalid %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -90,12 +97,24 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} GetUserResponse
 // @Router /user [get]
 func getUsers(w http.ResponseWriter, r *http.Request) {
-	current := r.URL.Query().Get("current")
+	var current bool;
 
-	if current == "true" {
+	currentVal := r.URL.Query().Get("current")
+	if currentVal == "" {
+		current = false
+	} else {
+		var err error
+		current, err = strconv.ParseBool(currentVal)
+		if err != nil {
+			http.Error(w, "Invalid current parameter", http.StatusBadRequest)
+			return
+		}
+	}
+
+	if current {
 		getCurrentUser(w, r)
 	} else {
-		getAllUsers(w, r)
+		getAllUsers(w)
 	}
 }
 
@@ -133,7 +152,7 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) {
  * @param w: the response writer
  * @param r: the request
  */
-func getAllUsers(w http.ResponseWriter, r *http.Request) {
+func getAllUsers(w http.ResponseWriter) {
 	users, err := getUsersDB()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

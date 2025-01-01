@@ -1,5 +1,10 @@
 package learnings
 
+import (
+	"errors"
+	"regexp"
+)
+
 const (
 	Languages    = "Languages"
 	Technologies = "Technologies"
@@ -8,7 +13,8 @@ const (
 	Other        = "Other"
 )
 
-var categories = []string{Languages, Technologies, Concepts, Projects, Other}
+var titleValidator = regexp.MustCompile(`^.{1,100}$`)
+var categoriesMap = map[string]struct{}{ Languages: {}, Technologies: {}, Concepts: {}, Projects: {}, Other: {} }
 
 type LearningBase struct {
 	Title string    `json:"title"`
@@ -28,5 +34,20 @@ type CreateLearningRequest struct {
 type GetLearningResponse struct {
 	ID int `json:"id"`
 	LearningBase
+}
+
+/*
+ * Validate the CreateLearningRequest
+ * @param createLearningRequest: the CreateLearningRequest to validate
+ * @return error: an error if the CreateLearningRequest is invalid
+ */
+func validateCreateLearningRequest(createLearningRequest CreateLearningRequest) error {
+	if _, ok := categoriesMap[createLearningRequest.Category]; !ok {
+		return errors.New("category")
+	}
+	if ok := titleValidator.MatchString(createLearningRequest.Title); !ok {
+		return errors.New("title")
+	}
+	return nil
 }
 

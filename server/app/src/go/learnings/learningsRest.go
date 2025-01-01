@@ -2,12 +2,15 @@ package learnings
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"software-slayer/auth"
 	"software-slayer/utils"
 	"strconv"
 	"strings"
 )
+
+var categoriesList []string
 
 // @Summary Create a new learning item
 // @Description Add a new learning item for a user
@@ -26,6 +29,11 @@ func createLearningItem(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.AuthorizeUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	if err := validateCreateLearningRequest(createLearningRequest); err != nil {
+		http.Error(w, fmt.Sprintf("Invalid %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -49,7 +57,7 @@ func createLearningItem(w http.ResponseWriter, r *http.Request) {
 func deleteLearningItem(w http.ResponseWriter, r *http.Request) {
 	learningId, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/learning/"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -89,7 +97,7 @@ func deleteLearningItem(w http.ResponseWriter, r *http.Request) {
 func getLearningItemsByUserId(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/learning/"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid user id parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -109,13 +117,18 @@ func getLearningItemsByUserId(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} string
 // @Router /learning/categories [get]
 func getLearningItemCategories(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(categories)
+	json.NewEncoder(w).Encode(categoriesList)
 }
 
 /*
  * InitLearningRoutes initializes the learning routes.
  */
 func InitLearningRoutes() {
+	categoriesList = make([]string, 0, len(categoriesMap))
+	for category := range categoriesMap {
+		categoriesList = append(categoriesList, category)
+	}
+
 	http.HandleFunc("GET /learning/", getLearningItemsByUserId)
 	http.HandleFunc("GET /learning/categories", getLearningItemCategories)
 	http.HandleFunc("POST /learning", createLearningItem)

@@ -17,7 +17,7 @@ import (
  * Manage the database connection and start the server
  */
 func main() {
-	auth.InitAuth()
+	auth.Init()
 
 	db.Open()
 	defer db.Close()

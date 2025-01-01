@@ -11,10 +11,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var jwtSecret []byte;
+var jwtSecret []byte
+
 const TOKEN_EXPIRATION = time.Hour * 24
 
-func InitAuth() {
+/*
+ * Init initializes the jwt secret from the JWT_SECRET_FILE environment variable
+ */
+func Init() {
 	secret, err := os.ReadFile(os.Getenv("JWT_SECRET_FILE"))
 	if err != nil {
 		log.Fatal(err)
