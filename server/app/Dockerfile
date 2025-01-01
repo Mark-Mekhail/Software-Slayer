@@ -5,6 +5,7 @@ FROM golang:1.23.4 AS build-stage
 
 WORKDIR /app
 
+# TODO: consider using swagger cli to generate the swagger API documentation code
 COPY src/go/ ./
 RUN go mod download
 
