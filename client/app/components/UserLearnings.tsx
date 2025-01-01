@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   list: {
-    flex: 1,
     width: '90%',
     flexDirection: 'column',
   },
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   input: {
-    flex: 1,
+    flex: 3,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
@@ -175,12 +174,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   addButton: {
+    flex: 1,
     paddingVertical: 10,
     borderRadius: 5,
   },
   addButtonText: {
     color: 'blue',
     fontWeight: 'bold',
+    textAlign: 'right',
   },
   deleteButton: {
     color: 'red',
