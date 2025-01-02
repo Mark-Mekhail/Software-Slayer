@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -17,9 +16,9 @@ var tokenLifetime time.Duration
  * Init initializes the auth package with the jwt secret and token lifetime
  * @param tokenLifetime: the lifetime of the jwt token
  */
-func Init(tokenLifetime time.Duration, jwtSecret []byte) {
-	tokenLifetime = tokenLifetime
-	jwtSecret = jwtSecret
+func Init(_tokenLifetime time.Duration, _jwtSecret []byte) {
+	tokenLifetime = _tokenLifetime
+	jwtSecret = _jwtSecret
 }
 
 /*
@@ -35,20 +34,17 @@ func AuthorizeUser(r *http.Request) (int, error) {
 		return jwtSecret, nil
 	})
 	if err != nil || !token.Valid {
-		log.Println(err)
 		return -1, errors.New("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		log.Println("invalid claims")
 		return -1, errors.New("invalid claims")
 	}
 
 	userId, ok := claims["user_id"]
 	if !ok {
-		log.Println("claims missing user_id")
-		return -1, errors.New("invalid claims")
+		return -1, errors.New("invalid user id")
 	}
 
 	return int(userId.(float64)), nil
@@ -84,7 +80,7 @@ func ValidatePassword(password, hash string) error {
 func GenerateToken(id int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": id,
-		"exp":     jwt.TimeFunc().Add(tokenLifetime).Unix(),
+		"exp":     time.Now().Add(tokenLifetime).Unix(),
 	})
 	return token.SignedString(jwtSecret)
 }

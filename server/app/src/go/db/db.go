@@ -60,8 +60,7 @@ func Close() {
  * @return error: An error if the query could not be executed.
  */
 func Exec(query string, args ...any) (sql.Result, error) {
-	result, err := db.Exec(query, args...)
-	return result, err
+	return db.Exec(query, args...)
 }
 
 /*
@@ -72,8 +71,7 @@ func Exec(query string, args ...any) (sql.Result, error) {
  * @return error: An error if the query could not be executed
  */
 func Query(query string, args ...any) (*sql.Rows, error) {
-	rows, err := db.Query(query, args...)
-	return rows, err
+	return db.Query(query, args...)
 }
 
 /*
