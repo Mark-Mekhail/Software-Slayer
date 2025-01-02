@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"log"
-	"os"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -16,21 +15,17 @@ var db *sql.DB
 /*
  * Open opens a connection to the database and initializes the db variable.
  */
-func Open() {
-	db_password, err := os.ReadFile(os.Getenv("DB_PASSWORD_FILE"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func Open(user, password, address, dbName string) {
 	config := mysql.Config{
-		User:   os.Getenv("DB_USER"),
-		Passwd: string(db_password),
+		User:   user,
+		Passwd: password,
 		Net:    "tcp",
-		Addr:   os.Getenv("DB_ADDRESS"),
-		DBName: os.Getenv("DB_NAME"),
+		Addr:   address,
+		DBName: dbName,
 	}
 
 	// Retry opening the database connection a few times before giving up
+	var err error
 	for i := 0; i < MAX_DB_OPEN_RETRIES; i++ {
 		db, err = sql.Open("mysql", config.FormatDSN())
 		if err != nil {

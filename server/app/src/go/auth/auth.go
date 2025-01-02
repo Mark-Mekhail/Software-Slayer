@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -12,19 +11,15 @@ import (
 )
 
 var jwtSecret []byte
-
-const TOKEN_EXPIRATION = time.Hour * 24
+var tokenLifetime time.Duration
 
 /*
- * Init initializes the jwt secret from the JWT_SECRET_FILE environment variable
+ * Init initializes the auth package with the jwt secret and token lifetime
+ * @param tokenLifetime: the lifetime of the jwt token
  */
-func Init() {
-	secret, err := os.ReadFile(os.Getenv("JWT_SECRET_FILE"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jwtSecret = secret
+func Init(tokenLifetime time.Duration, jwtSecret []byte) {
+	tokenLifetime = tokenLifetime
+	jwtSecret = jwtSecret
 }
 
 /*
@@ -89,7 +84,7 @@ func ValidatePassword(password, hash string) error {
 func GenerateToken(id int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": id,
-		"exp":     jwt.TimeFunc().Add(TOKEN_EXPIRATION).Unix(),
+		"exp":     jwt.TimeFunc().Add(tokenLifetime).Unix(),
 	})
 	return token.SignedString(jwtSecret)
 }

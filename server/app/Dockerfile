@@ -22,8 +22,6 @@ WORKDIR /
 
 COPY --from=build-stage /software-slayer-server /software-slayer-server
 
-EXPOSE 8080
-
 USER nonroot:nonroot
 
 ENTRYPOINT ["/software-slayer-server"]

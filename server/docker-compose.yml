@@ -11,7 +11,7 @@ services:
       - mysql_password
       - mysql_root_password
     ports:
-      - "3306:3306"
+      - "${DB_PORT:-3306}:3306"
     volumes:
       - mysql:/var/lib/mysql
       - ./db/sql/:/docker-entrypoint-initdb.d
@@ -20,7 +20,7 @@ services:
     image: software-slayer-server
     container_name: software-slayer-server
     environment:
-      DB_ADDRESS: "mysql:3306"
+      DB_ADDRESS: "mysql"
       DB_NAME: software-slayer-db
       DB_USER: ${MYSQL_USER:-software-slayer}
       JWT_SECRET_FILE: /run/secrets/jwt_secret
@@ -29,7 +29,7 @@ services:
       - jwt_secret
       - mysql_password
     ports:
-      - "8080:8080"
+      - "${SOFTWARE_SLAYER_PORT:-8080}:8080"
     
 volumes:
   mysql:
