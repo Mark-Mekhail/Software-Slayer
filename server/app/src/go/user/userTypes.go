@@ -52,7 +52,7 @@ type LoginResponse struct {
 /*
  * Validate the CreateUserRequest
  * @param user: the CreateUserRequest to validate
-
+ * @return error: an error if the CreateUserRequest is invalid
  */
 func validateCreateUserRequest(user CreateUserRequest) (error) {
 	if ok := usernameValidator.MatchString(user.Username); !ok {

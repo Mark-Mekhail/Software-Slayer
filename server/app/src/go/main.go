@@ -16,51 +16,55 @@ import (
 )
 
 const (
-	TOKEN_LIFETIME = time.Hour * 24
+	TOKEN_LIFETIME          = time.Hour * 24
 	JWT_SECRET_FILE_ENV_VAR = "JWT_SECRET_FILE"
-) 
+)
 
 /*
  * Manage the database connection and start the server
  */
 func main() {
-	initAuth()
+	tokenService := initTokenService()
 
-	initDB()
+	db, err := initDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer db.Close()
 
 	initSwagger()
-	initRoutes()
 
-	log.Println("Starting server on port 8080")
-	http.ListenAndServe(":8080", nil)
+	user.InitUserRest(user.NewUserService(db), tokenService)
+	learnings.InitLearningsRest(learnings.NewLearningsService(db), tokenService)
+
+	startServer()
 }
 
 /*
  * Initialize the auth package with the jwt secret and token lifetime
  */
-func initAuth() {
+func initTokenService() *auth.TokenService {
 	jwtSecret, err := os.ReadFile(os.Getenv(JWT_SECRET_FILE_ENV_VAR))
 	if err != nil {
 		log.Fatal("Failed to read jwt secret file")
 	}
-	auth.Init(TOKEN_LIFETIME, jwtSecret)
+	return auth.NewTokenService(TOKEN_LIFETIME, jwtSecret)
 }
 
 /*
  * Initialize the database connection
  */
-func initDB() {
+func initDB() (*db.Database, error) {
 	password, err := os.ReadFile(os.Getenv("DB_PASSWORD_FILE"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	user := os.Getenv("DB_USER")
 	address := os.Getenv("DB_ADDRESS")
 	name := os.Getenv("DB_NAME")
 
-	db.Open(user, string(password), address, name)
+	return db.NewDB(user, string(password), address, name)
 }
 
 /*
@@ -68,14 +72,6 @@ func initDB() {
  */
 func initSwagger() {
 	http.Handle("/swagger/", httpSwagger.WrapHandler)
-}
-
-/*
- * Initialize the routes for the server
- */
-func initRoutes() {
-	user.InitUserRoutes()
-	learnings.InitLearningRoutes()
 }
 
 /*

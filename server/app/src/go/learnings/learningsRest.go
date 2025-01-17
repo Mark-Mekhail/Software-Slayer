@@ -10,6 +10,9 @@ import (
 	"strings"
 )
 
+var learningsService *LearningsService
+var tokenService *auth.TokenService
+
 // @Summary Create a new learning item
 // @Description Add a new learning item for a user
 // @Tags Learning Items
@@ -24,7 +27,7 @@ func createLearningItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, err := auth.AuthorizeUser(r)
+	userId, err := tokenService.AuthorizeUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -35,7 +38,7 @@ func createLearningItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = createLearningDB(userId, createLearningRequest.Title, createLearningRequest.Category)
+	err = learningsService.CreateLearning(userId, createLearningRequest.Title, createLearningRequest.Category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -59,13 +62,13 @@ func deleteLearningItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, err := auth.AuthorizeUser(r)
+	userId, err := tokenService.AuthorizeUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	learningItemUserId, err := getUserByLearningIdDB(learningId)
+	learningItemUserId, err := learningsService.GetUserByLearningId(learningId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -76,7 +79,7 @@ func deleteLearningItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = deleteLearningDB(learningId)
+	err = learningsService.DeleteLearning(learningId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -99,7 +102,7 @@ func getLearningItemsByUserId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	skills, err := getLearningsByUserIdDB(userID)
+	skills, err := learningsService.GetLearningsByUserId(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -118,10 +121,10 @@ func getLearningItemCategories(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(categoriesList)
 }
 
-/*
- * InitLearningRoutes initializes the learning routes.
- */
-func InitLearningRoutes() {
+func InitLearningsRest(_learningsService *LearningsService, _tokenService *auth.TokenService) {
+	learningsService = _learningsService
+	tokenService = _tokenService
+
 	http.HandleFunc("GET /learning/", getLearningItemsByUserId)
 	http.HandleFunc("GET /learning/categories", getLearningItemCategories)
 	http.HandleFunc("POST /learning", createLearningItem)

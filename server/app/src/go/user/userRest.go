@@ -10,6 +10,9 @@ import (
 	"software-slayer/utils"
 )
 
+var userService *UserService
+var tokenService *auth.TokenService
+
 // @Summary Create a new user
 // @Description Register a new user with an email, password, and name
 // @Tags Users
@@ -34,7 +37,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = createUserDB(&user, passwordHash)
+	err = userService.CreateUser(&user, passwordHash)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +60,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := getUserByIdentifierDB(credentials.Identifier)
+	user, err := userService.GetUserByIdentifier(credentials.Identifier)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -69,7 +72,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.GenerateToken(user.ID)
+	token, err := tokenService.GenerateToken(user.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -97,7 +100,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} GetUserResponse
 // @Router /user [get]
 func getUsers(w http.ResponseWriter, r *http.Request) {
-	var current bool;
+	var current bool
 
 	currentVal := r.URL.Query().Get("current")
 	if currentVal == "" {
@@ -124,14 +127,14 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
  * @param r: the request
  */
 func getCurrentUser(w http.ResponseWriter, r *http.Request) {
-	userId, err := auth.AuthorizeUser(r)
+	userId, err := tokenService.AuthorizeUser(r)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	user, err := getUserByIdDB(userId)
+	user, err := userService.getUserById(userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -153,7 +156,7 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) {
  * @param r: the request
  */
 func getAllUsers(w http.ResponseWriter) {
-	users, err := getUsersDB()
+	users, err := userService.GetUsers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -162,10 +165,10 @@ func getAllUsers(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(users)
 }
 
-/*
- * InitUserRoutes initializes the user routes.
- */
-func InitUserRoutes() {
+func InitUserRest(_userService *UserService, _tokenService *auth.TokenService) {
+	userService = _userService
+	tokenService = _tokenService
+
 	http.HandleFunc("POST /user", createUser)
 	http.HandleFunc("GET /user", getUsers)
 	http.HandleFunc("POST /login", handleLogin)

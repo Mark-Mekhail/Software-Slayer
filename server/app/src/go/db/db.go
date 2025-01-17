@@ -2,20 +2,27 @@ package db
 
 import (
 	"database/sql"
-	"log"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
+
+	"software-slayer/configs"
 )
 
-const MAX_DB_OPEN_RETRIES = 5
-
-var db *sql.DB
+type Database struct {
+	conn *sql.DB
+}
 
 /*
- * Open opens a connection to the database and initializes the db variable.
+ * newDB creates a new connection to the database.
+ * @param user: The username to use to connect to the database.
+ * @param password: The password to use to connect to the database.
+ * @param address: The address of the database.
+ * @param dbName: The name of the database.
+ * @return *DB: A new connection to the database.
+ * @return error: An error if the connection could not be established.
  */
-func Open(user, password, address, dbName string) {
+func NewDB(user, password, address, dbName string) (*Database, error) {
 	config := mysql.Config{
 		User:   user,
 		Passwd: password,
@@ -25,9 +32,10 @@ func Open(user, password, address, dbName string) {
 	}
 
 	// Retry opening the database connection a few times before giving up
+	var conn *sql.DB
 	var err error
-	for i := 0; i < MAX_DB_OPEN_RETRIES; i++ {
-		db, err = sql.Open("mysql", config.FormatDSN())
+	for i := 0; i < configs.MAX_DB_OPEN_RETRIES; i++ {
+		conn, err = sql.Open("mysql", config.FormatDSN())
 		if err != nil {
 			break
 		}
@@ -35,20 +43,22 @@ func Open(user, password, address, dbName string) {
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	// Ping the database to ensure the connection is valid
-	err = db.Ping()
+	err = conn.Ping()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
+
+	return &Database{conn: conn}, nil
 }
 
 /*
  * Close closes the connection to the database.
  */
-func Close() {
+func (db *Database) Close() {
 	db.Close()
 }
 
@@ -59,8 +69,8 @@ func Close() {
  * @return sql.Result: The result of the query.
  * @return error: An error if the query could not be executed.
  */
-func Exec(query string, args ...any) (sql.Result, error) {
-	return db.Exec(query, args...)
+func (db *Database) Exec(query string, args ...any) (sql.Result, error) {
+	return db.conn.Exec(query, args...)
 }
 
 /*
@@ -70,8 +80,8 @@ func Exec(query string, args ...any) (sql.Result, error) {
  * @return *sql.Rows: The rows returned by the query
  * @return error: An error if the query could not be executed
  */
-func Query(query string, args ...any) (*sql.Rows, error) {
-	return db.Query(query, args...)
+func (db *Database) Query(query string, args ...any) (*sql.Rows, error) {
+	return db.conn.Query(query, args...)
 }
 
 /*
@@ -80,6 +90,6 @@ func Query(query string, args ...any) (*sql.Rows, error) {
  * @param args: The arguments to pass to the query
  * @return *sql.Row: The row returned by the query
  */
-func QueryRow(query string, args ...any) *sql.Row {
-	return db.QueryRow(query, args...)
+func (db *Database) QueryRow(query string, args ...any) *sql.Row {
+	return db.conn.QueryRow(query, args...)
 }
