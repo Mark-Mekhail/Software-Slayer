@@ -1,34 +1,12 @@
-package auth
+package auth_test
 
 import (
 	"net/http"
 	"testing"
 	"time"
+
+	"software-slayer/auth"
 )
-
-func FuzzHashPassword(f *testing.F) {
-	secretSeeds := []string{ "secret", "seed", "s", "verylongsecretthatjustkeepsgettinglongerandlonger", "78934218057923", "()_*&(*%^&$#(*#)*%$#><?>{L{}})" }
-	passwordSeeds := []string{ "password", "pass", "p", "verylongpasswordthatjustkeepsgettinglongerandlonger", "78934218057923", "()_*&(*%^&$#(*#)*%$#><?>{L{}})", "" }
-
-	for _, secret := range secretSeeds {
-		for _, password := range passwordSeeds {
-			f.Add(secret, password)
-		}
-	}
-
-	f.Fuzz(func(t *testing.T, jwtSecret string, password string) {
-		Init(time.Minute, []byte(jwtSecret))
-
-		hashedPassword, err := HashPassword(password)
-		if err != nil {
-			t.Errorf("HashPassword(%s) returned error: %v", password, err)
-		}
-
-		if err := ValidatePassword(password, hashedPassword); err != nil {
-			t.Errorf("ValidatePassword(%s, %s) returned false", password, hashedPassword)
-		}
-	})
-}
 
 func FuzzAuthorizeUser(f *testing.F) {
 	durationSeeds := []int64{ int64(time.Hour), int64(time.Minute), int64(3 * time.Second) }
@@ -44,9 +22,9 @@ func FuzzAuthorizeUser(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, duration int64, jwtSecret string, userId int) {
-		Init(time.Duration(duration), []byte(jwtSecret))
+		tokenService := auth.NewTokenService(time.Duration(duration), []byte(jwtSecret))
 
-		token, err := GenerateToken(userId)
+		token, err := tokenService.GenerateToken(userId)
 		if err != nil {
 			t.Errorf("GenerateToken() returned error: %v", err)
 		}
@@ -57,7 +35,7 @@ func FuzzAuthorizeUser(f *testing.F) {
 			},
 		}
 
-		id, err := AuthorizeUser(r)
+		id, err := tokenService.AuthorizeUser(r)
 		if err != nil {
 			t.Errorf("AuthorizeUser() returned error: %v", err)
 		}
@@ -69,9 +47,9 @@ func FuzzAuthorizeUser(f *testing.F) {
 }
 
 func TestAuthorizeUserExpiredToken(t *testing.T) {
-	Init(time.Second, []byte("secret"))
+	tokenService := auth.NewTokenService(time.Second, []byte("secret"))
 
-	token, err := GenerateToken(1)
+	token, err := tokenService.GenerateToken(1)
 	if err != nil {
 		t.Errorf("GenerateToken() returned error: %v", err)
 	}
@@ -82,14 +60,14 @@ func TestAuthorizeUserExpiredToken(t *testing.T) {
 		},
 	}
 
-	_, err = AuthorizeUser(r)
+	_, err = tokenService.AuthorizeUser(r)
 	if err != nil {
 		t.Errorf("AuthorizeUser() returned error: %v", err)
 	}
 
 	time.Sleep(time.Second * 2)
 
-	_, err = AuthorizeUser(r)
+	_, err = tokenService.AuthorizeUser(r)
 	if err == nil {
 		t.Errorf("AuthorizeUser() did not return error for expired token")
 	}
