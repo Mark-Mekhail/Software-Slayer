@@ -5,10 +5,10 @@ import (
 )
 
 type LearningsService struct {
-	db *db.Database
+	db db.DatabaseInterface
 }
 
-func NewLearningsService(db *db.Database) *LearningsService {
+func NewLearningsService(db db.DatabaseInterface) *LearningsService {
 	return &LearningsService{db: db}
 }
 
