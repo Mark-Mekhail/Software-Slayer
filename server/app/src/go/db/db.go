@@ -13,13 +13,6 @@ type Database struct {
 	conn *sql.DB
 }
 
-type DatabaseInterface interface {
-	Close() error
-	Exec(query string, args ...any) (sql.Result, error)
-	Query(query string, args ...any) (*sql.Rows, error)
-	QueryRow(query string, args ...any) *sql.Row
-}
-
 /*
  * newDB creates a new connection to the database.
  * @param user: The username to use to connect to the database.

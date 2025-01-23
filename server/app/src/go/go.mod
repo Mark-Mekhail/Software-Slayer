@@ -27,6 +27,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.31.0

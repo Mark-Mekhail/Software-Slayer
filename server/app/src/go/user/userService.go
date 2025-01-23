@@ -5,10 +5,10 @@ import (
 )
 
 type UserService struct {
-	db db.DatabaseInterface
+	db db.Database
 }
 
-func NewUserService(db db.DatabaseInterface) *UserService {
+func NewUserService(db db.Database) *UserService {
 	return &UserService{db: db}
 }
 
