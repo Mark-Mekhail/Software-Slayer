@@ -1,0 +1,21 @@
+name: Server CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build Docker image
+      run: docker build --target build-stage -t software-slayer-build ./server/app
+
+    - name: Run tests
+      run: docker run --rm software-slayer-build go test ./...
