@@ -27,7 +27,7 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 ### Steps
 
-1. **Clone the repository**:
+1. **Clone the repository**
 
 2. **Create secret files**:
 
