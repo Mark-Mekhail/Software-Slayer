@@ -27,7 +27,7 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 ### Steps
 
-1. **Clone the repository**
+1. **Clone the repository**:
 
 2. **Create secret files**:
 
@@ -37,7 +37,17 @@ Software-Slayer is a full-stack application designed to manage user accounts and
    - `mysql_root_password.txt`: Contains the MySQL root password.
    - `jwt_secret.txt`: Contains the JWT secret key.
 
-3. **Install frontend dependencies**:
+3. **Start the backend services**:
+
+   Navigate to the `server` directory and run the following command to start the backend services using Docker Compose:
+
+   ```sh
+   docker-compose up
+   ```
+
+   This will start the MySQL database and the Go server.
+
+4. **Install frontend dependencies**:
 
    Navigate to the `client` directory and run the following command to install the dependencies:
 
