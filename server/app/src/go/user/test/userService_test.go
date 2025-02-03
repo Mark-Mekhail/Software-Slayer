@@ -17,7 +17,7 @@ func setup(t *testing.T) (sqlmock.Sqlmock, *user.UserService) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	s := user.NewUserService(*db.NewTestDB(database))
+	s := user.NewUserService(db.NewDB(database))
 
 	return mock, s
 }
@@ -132,6 +132,109 @@ func TestGetUsersError(t *testing.T) {
 	dbMock.ExpectQuery("SELECT id, username, first_name, last_name FROM users").WillReturnError(errors.New("error"))
 
 	_, err := s.GetUsers()
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+}
+
+func TestGetUserByIdentifier(t *testing.T) {
+	dbMock, s := setup(t)
+
+	user := user.UserDB{
+		ID: 1,
+		UserBase: user.UserBase{
+			Username: "user",
+			FirstName: "John",
+			LastName: "Doe",
+		},
+		Email: "user1@hotmail.com",
+	}
+
+	rows := sqlmock.NewRows([]string{"id", "username", "email", "password_hash", "first_name", "last_name"}).AddRow(user.ID, user.Username, user.Email, user.PasswordHash, user.FirstName, user.LastName)
+
+	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WithArgs(user.Email, user.Email).WillReturnRows(rows)
+	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WithArgs(user.Username, user.Username).WillReturnRows(rows)
+
+	res, err := s.GetUserByIdentifier(user.Email)
+	if err != nil {
+		t.Error("Expected nil, got ", err)
+	}
+
+	if user.ID != res.ID || user.Username != res.Username || user.Email != res.Email || user.PasswordHash != res.PasswordHash || user.FirstName != res.FirstName || user.LastName != res.LastName {
+		t.Error("Expected ", user, ", got ", res)
+	}
+
+	rows.AddRow(user.ID, user.Username, user.Email, user.PasswordHash, user.FirstName, user.LastName)
+
+	res, err = s.GetUserByIdentifier(user.Username)
+	if err != nil {
+		t.Error("Expected nil, got ", err)
+	}
+
+	if user.ID != res.ID || user.Username != res.Username || user.Email != res.Email || user.PasswordHash != res.PasswordHash || user.FirstName != res.FirstName || user.LastName != res.LastName {
+		t.Error("Expected ", user, ", got ", res)
+	}
+}
+
+func TestGetUserByIdentifierNoUser(t *testing.T) {
+	dbMock, s := setup(t)
+
+	rows := sqlmock.NewRows([]string{"id", "username", "email", "password_hash", "first_name", "last_name"})
+
+	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WillReturnRows(rows)
+
+	_, err := s.GetUserByIdentifier("")
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+}
+
+func TestGetUserByIdentifierError(t *testing.T) {
+	dbMock, s := setup(t)
+
+	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WillReturnError(errors.New("error"))
+
+	_, err := s.GetUserByIdentifier("")
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+}
+
+func TestGetUserById(t *testing.T) {
+	dbMock, s := setup(t)
+
+	user := user.UserDB{
+		ID: 1,
+		UserBase: user.UserBase{
+			Username: "user",
+			FirstName: "John",
+			LastName: "Doe",
+		},
+		Email: "user@email.ca",
+	}
+
+	rows := sqlmock.NewRows([]string{"id", "username", "email", "password_hash", "first_name", "last_name"}).AddRow(user.ID, user.Username, user.Email, user.PasswordHash, user.FirstName, user.LastName)
+
+	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE id = \\?").WithArgs(user.ID).WillReturnRows(rows)
+
+	res, err := s.GetUserById(user.ID)
+	if err != nil {
+		t.Error("Expected nil, got ", err)
+	}
+
+	if user.ID != res.ID || user.Username != res.Username || user.Email != res.Email || user.PasswordHash != res.PasswordHash || user.FirstName != res.FirstName || user.LastName != res.LastName {
+		t.Error("Expected ", user, ", got ", res)
+	}
+}
+
+func TestGetUserByIdNoUser(t *testing.T) {
+	dbMock, s := setup(t)
+
+	rows := sqlmock.NewRows([]string{"id", "username", "email", "password_hash", "first_name", "last_name"})
+
+	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE id = \\?").WillReturnRows(rows)
+
+	_, err := s.GetUserById(1)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}

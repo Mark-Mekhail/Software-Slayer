@@ -26,10 +26,7 @@ const (
 func main() {
 	tokenService := initTokenService()
 
-	db, err := initDB()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := initDB()
 	defer db.Close()
 
 	initSwagger()
@@ -54,7 +51,7 @@ func initTokenService() *auth.TokenService {
 /*
  * Initialize the database connection
  */
-func initDB() (*db.Database, error) {
+func initDB() *db.Database {
 	password, err := os.ReadFile(os.Getenv("DB_PASSWORD_FILE"))
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +61,12 @@ func initDB() (*db.Database, error) {
 	address := os.Getenv("DB_ADDRESS")
 	name := os.Getenv("DB_NAME")
 
-	return db.NewDB(user, string(password), address, name)
+	dbConn, err := db.OpenConnection(user, string(password), address, name)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return db.NewDB(dbConn)
 }
 
 /*

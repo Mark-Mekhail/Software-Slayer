@@ -5,10 +5,10 @@ import (
 )
 
 type UserService struct {
-	db db.Database
+	db *db.Database
 }
 
-func NewUserService(db db.Database) *UserService {
+func NewUserService(db *db.Database) *UserService {
 	return &UserService{db: db}
 }
 
@@ -42,7 +42,7 @@ func (s *UserService) GetUserByIdentifier(identifier string) (UserDB, error) {
 	return user, err
 }
 
-func (s *UserService) getUserById(id int) (UserDB, error) {
+func (s *UserService) GetUserById(id int) (UserDB, error) {
 	var user UserDB
 	err := s.db.QueryRow("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE id = ?", id).Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.FirstName, &user.LastName)
 	return user, err

@@ -134,7 +134,7 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := userService.getUserById(userId)
+	user, err := userService.GetUserById(userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
