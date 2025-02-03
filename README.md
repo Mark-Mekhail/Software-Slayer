@@ -29,11 +29,6 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 1. **Clone the repository**:
 
-   ```sh
-   git clone https://github.com/your-username/software-slayer.git
-   cd software-slayer
-   ```
-
 2. **Create secret files**:
 
    Create the following secret files in the `secrets` directory:
@@ -44,7 +39,7 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 3. **Start the backend services**:
 
-   Navigate to the root directory and run the following command to start the backend services using Docker Compose:
+   Navigate to the `server` directory and run the following command to start the backend services using Docker Compose:
 
    ```sh
    docker-compose up
@@ -69,7 +64,3 @@ Software-Slayer is a full-stack application designed to manage user accounts and
    ```
 
    Follow the instructions in the terminal to open the application on an Android emulator, iOS simulator, or a physical device using the Expo Go app.
-
-## Conclusion
-
-You have successfully set up and run the Software-Slayer application locally. You can now explore the features and functionality of the application. If you encounter any issues or have any questions, feel free to open an issue on the GitHub repository.
