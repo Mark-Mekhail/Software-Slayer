@@ -11,6 +11,7 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 - **Go**: The backend is implemented in Go, providing RESTful APIs for user authentication and learning item management.
 - **MySQL**: The application uses MySQL as the database to store user information and learning items.
 - **Docker**: Docker is used to containerize the application, making it easy to deploy and manage.
+- **Swagger**: Swagger is used for API documentation and testing.
 
 ### Frontend
 
