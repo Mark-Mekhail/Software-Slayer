@@ -4,20 +4,27 @@ import (
 	"software-slayer/db"
 )
 
-type UserService struct {
+type UserService interface {
+	CreateUser(user *CreateUserRequest, passwordHash string) error
+	GetUsers() ([]GetUserResponse, error)
+	GetUserByIdentifier(identifier string) (UserDB, error)
+	GetUserById(id int) (UserDB, error)
+}
+
+type UserServiceImpl struct {
 	db *db.Database
 }
 
-func NewUserService(db *db.Database) *UserService {
-	return &UserService{db: db}
+func NewUserService(db *db.Database) *UserServiceImpl {
+	return &UserServiceImpl{db: db}
 }
 
-func (s *UserService) CreateUser(user *CreateUserRequest, passwordHash string) error {
+func (s *UserServiceImpl) CreateUser(user *CreateUserRequest, passwordHash string) error {
 	_, err := s.db.Exec("INSERT INTO users (email, username, password_hash, first_name, last_name) VALUES (?, ?, ?, ?, ?)", user.Email, user.Username, passwordHash, user.FirstName, user.LastName)
 	return err
 }
 
-func (s *UserService) GetUsers() ([]GetUserResponse, error) {
+func (s *UserServiceImpl) GetUsers() ([]GetUserResponse, error) {
 	rows, err := s.db.Query("SELECT id, username, first_name, last_name FROM users")
 	if err != nil {
 		return nil, err
@@ -36,13 +43,13 @@ func (s *UserService) GetUsers() ([]GetUserResponse, error) {
 	return users, nil
 }
 
-func (s *UserService) GetUserByIdentifier(identifier string) (UserDB, error) {
+func (s *UserServiceImpl) GetUserByIdentifier(identifier string) (UserDB, error) {
 	var user UserDB
 	err := s.db.QueryRow("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = ? OR username = ?", identifier, identifier).Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.FirstName, &user.LastName)
 	return user, err
 }
 
-func (s *UserService) GetUserById(id int) (UserDB, error) {
+func (s *UserServiceImpl) GetUserById(id int) (UserDB, error) {
 	var user UserDB
 	err := s.db.QueryRow("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE id = ?", id).Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash, &user.FirstName, &user.LastName)
 	return user, err

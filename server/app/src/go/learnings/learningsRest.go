@@ -11,7 +11,7 @@ import (
 )
 
 var learningsService *LearningsService
-var tokenService *auth.TokenService
+var tokenService *auth.TokenServiceImpl
 
 // @Summary Create a new learning item
 // @Description Add a new learning item for a user
@@ -27,7 +27,7 @@ func createLearningItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, err := tokenService.AuthorizeUser(r)
+	userId, err := tokenService.AuthorizeUser(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -62,7 +62,7 @@ func deleteLearningItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, err := tokenService.AuthorizeUser(r)
+	userId, err := tokenService.AuthorizeUser(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -121,7 +121,7 @@ func getLearningItemCategories(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(categoriesList)
 }
 
-func InitLearningsRest(_learningsService *LearningsService, _tokenService *auth.TokenService) {
+func InitLearningsRest(_learningsService *LearningsService, _tokenService *auth.TokenServiceImpl) {
 	learningsService = _learningsService
 	tokenService = _tokenService
 

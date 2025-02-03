@@ -10,8 +10,8 @@ import (
 	"software-slayer/utils"
 )
 
-var userService *UserService
-var tokenService *auth.TokenService
+var userService UserService
+var tokenService auth.TokenService
 
 // @Summary Create a new user
 // @Description Register a new user with an email, password, and name
@@ -127,7 +127,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
  * @param r: the request
  */
 func getCurrentUser(w http.ResponseWriter, r *http.Request) {
-	userId, err := tokenService.AuthorizeUser(r)
+	userId, err := tokenService.AuthorizeUser(r.Header.Get("Authorization"))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -165,7 +165,7 @@ func getAllUsers(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func InitUserRest(_userService *UserService, _tokenService *auth.TokenService) {
+func InitUserRest(_userService UserService, _tokenService auth.TokenService) {
 	userService = _userService
 	tokenService = _tokenService
 

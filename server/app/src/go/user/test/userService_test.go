@@ -10,7 +10,7 @@ import (
 	"software-slayer/user"
 )
 
-func setup(t *testing.T) (sqlmock.Sqlmock, *user.UserService) {
+func setup(t *testing.T) (sqlmock.Sqlmock, *user.UserServiceImpl) {
 	// Create a mock sql.DB object using sqlmock
 	database, mock, err := sqlmock.New()
 	if err != nil {
@@ -69,19 +69,19 @@ func TestGetUsers(t *testing.T) {
 
 	users := []user.GetUserResponse{
 		{
-			ID: 1, 
+			ID: 1,
 			UserBase: user.UserBase{
-				Username: "user1", 
-				FirstName: "John", 
-				LastName: "Doe",
+				Username:  "user1",
+				FirstName: "John",
+				LastName:  "Doe",
 			},
 		},
 		{
 			ID: 2,
 			UserBase: user.UserBase{
-				Username: "user2",
+				Username:  "user2",
 				FirstName: "Jane",
-				LastName: "Doe",
+				LastName:  "Doe",
 			},
 		},
 	}
@@ -143,9 +143,9 @@ func TestGetUserByIdentifier(t *testing.T) {
 	user := user.UserDB{
 		ID: 1,
 		UserBase: user.UserBase{
-			Username: "user",
+			Username:  "user",
 			FirstName: "John",
-			LastName: "Doe",
+			LastName:  "Doe",
 		},
 		Email: "user1@hotmail.com",
 	}
@@ -206,9 +206,9 @@ func TestGetUserById(t *testing.T) {
 	user := user.UserDB{
 		ID: 1,
 		UserBase: user.UserBase{
-			Username: "user",
+			Username:  "user",
 			FirstName: "John",
-			LastName: "Doe",
+			LastName:  "Doe",
 		},
 		Email: "user@email.ca",
 	}

@@ -2,24 +2,26 @@ package auth
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
-type TokenService struct {
+type TokenService interface {
+	AuthorizeUser(tokenString string) (int, error)
+	GenerateToken(id int) (string, error)
+}
+
+type TokenServiceImpl struct {
 	jwtSecret     []byte
 	tokenLifetime time.Duration
 }
 
-func NewTokenService(tokenLifetime time.Duration, jwtSecret []byte) *TokenService {
-	return &TokenService{tokenLifetime: tokenLifetime, jwtSecret: jwtSecret}
+func NewTokenService(tokenLifetime time.Duration, jwtSecret []byte) *TokenServiceImpl {
+	return &TokenServiceImpl{tokenLifetime: tokenLifetime, jwtSecret: jwtSecret}
 }
 
-func (s *TokenService) AuthorizeUser(r *http.Request) (int, error) {
-	tokenString := r.Header.Get("Authorization")
-
+func (s *TokenServiceImpl) AuthorizeUser(tokenString string) (int, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return s.jwtSecret, nil
 	})
@@ -40,7 +42,7 @@ func (s *TokenService) AuthorizeUser(r *http.Request) (int, error) {
 	return int(userId.(float64)), nil
 }
 
-func (s *TokenService) GenerateToken(id int) (string, error) {
+func (s *TokenServiceImpl) GenerateToken(id int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": id,
 		"exp":     time.Now().Add(s.tokenLifetime).Unix(),

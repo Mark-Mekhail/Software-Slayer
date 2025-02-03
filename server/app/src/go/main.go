@@ -40,7 +40,7 @@ func main() {
 /*
  * Initialize the auth package with the jwt secret and token lifetime
  */
-func initTokenService() *auth.TokenService {
+func initTokenService() *auth.TokenServiceImpl {
 	jwtSecret, err := os.ReadFile(os.Getenv(JWT_SECRET_FILE_ENV_VAR))
 	if err != nil {
 		log.Fatal("Failed to read jwt secret file")

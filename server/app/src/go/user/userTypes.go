@@ -73,4 +73,3 @@ func validateCreateUserRequest(user CreateUserRequest) (error) {
 
 	return nil
 }
-
