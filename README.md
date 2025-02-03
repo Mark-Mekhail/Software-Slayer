@@ -22,7 +22,7 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 ### Prerequisites
 
-- Docker and Docker Compose installed on your machine.
+- Docker installed on your machine.
 - Node.js and npm installed on your machine.
 
 ### Steps
