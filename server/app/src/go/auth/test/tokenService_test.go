@@ -1,7 +1,6 @@
 package auth_test
 
 import (
-	"net/http"
 	"testing"
 	"time"
 
@@ -28,14 +27,8 @@ func FuzzAuthorizeUser(f *testing.F) {
 		if err != nil {
 			t.Errorf("GenerateToken() returned error: %v", err)
 		}
-		
-		r := &http.Request{
-			Header: map[string][]string{
-				"Authorization": {token},
-			},
-		}
 
-		id, err := tokenService.AuthorizeUser(r)
+		id, err := tokenService.AuthorizeUser(token)
 		if err != nil {
 			t.Errorf("AuthorizeUser() returned error: %v", err)
 		}
@@ -54,20 +47,14 @@ func TestAuthorizeUserExpiredToken(t *testing.T) {
 		t.Errorf("GenerateToken() returned error: %v", err)
 	}
 
-	r := &http.Request{
-		Header: map[string][]string{
-			"Authorization": {token},
-		},
-	}
-
-	_, err = tokenService.AuthorizeUser(r)
+	_, err = tokenService.AuthorizeUser(token)
 	if err != nil {
 		t.Errorf("AuthorizeUser() returned error: %v", err)
 	}
 
 	time.Sleep(time.Second * 2)
 
-	_, err = tokenService.AuthorizeUser(r)
+	_, err = tokenService.AuthorizeUser(token)
 	if err == nil {
 		t.Errorf("AuthorizeUser() did not return error for expired token")
 	}

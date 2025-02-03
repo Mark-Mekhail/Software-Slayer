@@ -6,10 +6,11 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
-	"software-slayer/user"
 	"software-slayer/auth"
+	"software-slayer/user"
 )
 
 type MockUserService struct{}
@@ -72,17 +73,19 @@ func (m *MockTokenService) AuthorizeUser(token string) (int, error) {
 	return 0, errors.New("invalid token")
 }
 
-func SetupServer() *httptest.Server {
+var ts *httptest.Server
+
+func TestMain(m *testing.M) {
 	mockUserService := &MockUserService{}
 	mockTokenService := &MockTokenService{}
 	user.InitUserRest(mockUserService, mockTokenService)
-	return httptest.NewServer(http.DefaultServeMux)
+	ts = httptest.NewServer(http.DefaultServeMux)
+	defer ts.Close()
+
+	os.Exit(m.Run())
 }
 
 func TestCreateUserSuccess(t *testing.T) {
-	ts := SetupServer()
-	defer ts.Close()
-
 	requestBody := user.CreateUserRequest{
 		Email:    "test@example.com",
 		Password: "password123",
@@ -106,9 +109,6 @@ func TestCreateUserSuccess(t *testing.T) {
 }
 
 func TestHandleLoginSuccess(t *testing.T) {
-	ts := SetupServer()
-	defer ts.Close()
-
 	requestBody := user.Credentials{
 		Identifier: "test@example.com",
 		Password: "password123",
@@ -127,9 +127,6 @@ func TestHandleLoginSuccess(t *testing.T) {
 }
 
 func TestGetAllUsers(t *testing.T) {
-	ts := SetupServer()
-	defer ts.Close()
-
 	resp, err := http.Get(ts.URL + "/user")
 	if err != nil {
 		t.Fatal(err)
@@ -142,9 +139,6 @@ func TestGetAllUsers(t *testing.T) {
 }
 
 func TestGetCurrentUser(t *testing.T) {
-	ts := SetupServer()
-	defer ts.Close()
-
 	req, _ := http.NewRequest("GET", ts.URL+"/user", nil)
 	req.Header.Set("Authorization", "Bearer valid_token")
 
