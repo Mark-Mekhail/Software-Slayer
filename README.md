@@ -17,6 +17,9 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 - **React Native**: The frontend is built using React Native, allowing the application to run on both iOS and Android devices.
 - **Expo**: Expo is used to streamline the development process and provide additional tools and services for building React Native applications.
+- **Jest**: Jest is used for testing the frontend components.
+- **ESLint**: ESLint is used to enforce code quality and style rules.
+- **Prettier**: Prettier is used to format the code according to defined rules.
 
 ## Running the Application Locally
 
