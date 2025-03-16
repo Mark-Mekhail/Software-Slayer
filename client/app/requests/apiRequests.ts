@@ -1,4 +1,4 @@
-import { Platform } from "react-native";
+import { Platform } from 'react-native';
 
 const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
 
@@ -9,8 +9,8 @@ const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:8080' : 'http://lo
  * @returns the response from the request
  */
 async function getRequest(endpoint: string, headers?: any): Promise<Response> {
-    return await fetch(`${BASE_URL}${endpoint}`, { headers });
-};
+  return await fetch(`${BASE_URL}${endpoint}`, { headers });
+}
 
 /*
  * postRequest is a generic function that makes a POST request to the specified endpoint.
@@ -23,11 +23,11 @@ async function postRequest(endpoint: string, headers?: any, payload?: any): Prom
   return await fetch(`${BASE_URL}${endpoint}`, {
     method: 'POST',
     headers: {
-      ...headers
+      ...headers,
     },
     body: JSON.stringify(payload),
   });
-};
+}
 
 /*
  * putRequest is a generic function that makes a PUT request to the specified endpoint.
@@ -42,7 +42,7 @@ async function putRequest(endpoint: string, headers?: any, payload?: any): Promi
     headers,
     body: JSON.stringify(payload),
   });
-};
+}
 
 /*
  * deleteRequest is a generic function that makes a DELETE request to the specified endpoint.
@@ -55,7 +55,7 @@ async function deleteRequest(endpoint: string, headers?: any): Promise<Response>
     method: 'DELETE',
     headers,
   });
-};
+}
 
 export const apiRequests = {
   getRequest,

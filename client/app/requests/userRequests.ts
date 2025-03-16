@@ -1,4 +1,4 @@
-import { apiRequests } from "./apiRequests";
+import { apiRequests } from './apiRequests';
 
 /*
  * createUser is a function that makes a POST request to create a new user.
@@ -15,12 +15,12 @@ async function createUser(
   firstName: string,
   lastName: string,
   username: string,
-  password: string
+  password: string,
 ): Promise<void> {
   const response = await apiRequests.postRequest('/user', null, {
     email,
-    "first_name": firstName,
-    "last_name": lastName,
+    first_name: firstName,
+    last_name: lastName,
     username,
     password,
   });

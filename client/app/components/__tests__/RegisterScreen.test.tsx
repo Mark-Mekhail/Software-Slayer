@@ -20,7 +20,7 @@ describe('RegisterScreen', () => {
 
   it('renders correctly with all form fields', () => {
     const { getByText, getByPlaceholderText } = render(
-      <RegisterScreen navigation={mockNavigation} />
+      <RegisterScreen navigation={mockNavigation} />,
     );
 
     expect(getByText('Create Account')).toBeTruthy();
@@ -34,9 +34,7 @@ describe('RegisterScreen', () => {
   });
 
   it('updates state when text inputs change', () => {
-    const { getByPlaceholderText } = render(
-      <RegisterScreen navigation={mockNavigation} />
-    );
+    const { getByPlaceholderText } = render(<RegisterScreen navigation={mockNavigation} />);
 
     const emailInput = getByPlaceholderText('Email');
     const usernameInput = getByPlaceholderText('Username');
@@ -59,7 +57,7 @@ describe('RegisterScreen', () => {
 
   it('validates all fields are filled before submission', () => {
     const { getByText, getByPlaceholderText } = render(
-      <RegisterScreen navigation={mockNavigation} />
+      <RegisterScreen navigation={mockNavigation} />,
     );
 
     // Fill only some fields
@@ -72,10 +70,7 @@ describe('RegisterScreen', () => {
     fireEvent.press(registerButton);
 
     // Should show an error alert
-    expect(Alert.alert).toHaveBeenCalledWith(
-      'Error', 
-      'Please fill out all fields.'
-    );
+    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Please fill out all fields.');
     expect(createUser).not.toHaveBeenCalled();
   });
 
@@ -83,7 +78,7 @@ describe('RegisterScreen', () => {
     (createUser as jest.Mock).mockResolvedValueOnce(undefined);
 
     const { getByText, getByPlaceholderText } = render(
-      <RegisterScreen navigation={mockNavigation} />
+      <RegisterScreen navigation={mockNavigation} />,
     );
 
     // Fill all fields
@@ -103,7 +98,7 @@ describe('RegisterScreen', () => {
         'John',
         'Doe',
         'testuser',
-        'password123'
+        'password123',
       );
       expect(mockNavigation.navigate).toHaveBeenCalledWith('Login');
     });
@@ -113,7 +108,7 @@ describe('RegisterScreen', () => {
     (createUser as jest.Mock).mockRejectedValueOnce(new Error('Registration failed'));
 
     const { getByText, getByPlaceholderText } = render(
-      <RegisterScreen navigation={mockNavigation} />
+      <RegisterScreen navigation={mockNavigation} />,
     );
 
     // Fill all fields
@@ -129,18 +124,13 @@ describe('RegisterScreen', () => {
 
     await waitFor(() => {
       expect(createUser).toHaveBeenCalled();
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Error', 
-        'An error occurred. Please try again.'
-      );
+      expect(Alert.alert).toHaveBeenCalledWith('Error', 'An error occurred. Please try again.');
       expect(mockNavigation.navigate).not.toHaveBeenCalled();
     });
   });
 
   it('navigates to Login screen when "Log in" link is clicked', () => {
-    const { getByText } = render(
-      <RegisterScreen navigation={mockNavigation} />
-    );
+    const { getByText } = render(<RegisterScreen navigation={mockNavigation} />);
 
     const loginLink = getByText('Already have an account? Log in');
     fireEvent.press(loginLink);

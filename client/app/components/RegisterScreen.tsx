@@ -6,8 +6,8 @@ import { createUser } from '../requests/userRequests';
 interface RegisterScreenProps {
   navigation: {
     navigate: (screen: string) => void;
-  }
-};
+  };
+}
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const [email, setEmail] = useState<string>('');
@@ -77,17 +77,12 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.linkButton}
-        onPress={() =>
-          navigation.navigate('Login')
-        }
-      >
+      <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.linkText}>Already have an account? Log in</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

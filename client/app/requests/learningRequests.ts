@@ -1,4 +1,4 @@
-import { apiRequests } from "./apiRequests";
+import { apiRequests } from './apiRequests';
 
 interface LearningItem {
   id: number;
@@ -16,18 +16,18 @@ interface LearningItem {
  */
 async function createLearning(authToken: string, title: string, category: string): Promise<void> {
   const response = await apiRequests.postRequest(
-    '/learning', 
-    { Authorization: authToken }, 
-    { 
-      title, 
-      category 
-    }
+    '/learning',
+    { Authorization: authToken },
+    {
+      title,
+      category,
+    },
   );
 
   if (!response.ok) {
     throw new Error('Failed to add learning item');
   }
-};
+}
 
 /*
  * deleteLearning is a function that makes a DELETE request to delete a learning item.
@@ -37,15 +37,12 @@ async function createLearning(authToken: string, title: string, category: string
  * @throws an error if the request fails
  */
 async function deleteLearning(authToken: string, id: number): Promise<void> {
-  const response = await apiRequests.deleteRequest(
-    `/learning/${id}`,
-    { Authorization: authToken }
-  );
+  const response = await apiRequests.deleteRequest(`/learning/${id}`, { Authorization: authToken });
 
   if (!response.ok) {
     throw new Error('Failed to remove learning item');
   }
-};
+}
 
 /*
  * getLearnings is a function that makes a GET request to get all learning items for a user.

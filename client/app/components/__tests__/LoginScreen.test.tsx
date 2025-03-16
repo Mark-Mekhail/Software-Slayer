@@ -30,7 +30,7 @@ describe('LoginScreen', () => {
     const { getByText, getByPlaceholderText, getByTestId } = render(
       <UserContext.Provider value={mockUserContext}>
         <LoginScreen navigation={mockNavigation} />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Check if all elements are rendered
@@ -45,7 +45,7 @@ describe('LoginScreen', () => {
     const { getByPlaceholderText } = render(
       <UserContext.Provider value={mockUserContext}>
         <LoginScreen navigation={mockNavigation} />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const identifierInput = getByPlaceholderText('Enter your email or username');
@@ -62,15 +62,15 @@ describe('LoginScreen', () => {
     const { getByTestId } = render(
       <UserContext.Provider value={mockUserContext}>
         <LoginScreen navigation={mockNavigation} />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const loginButton = getByTestId('login-button');
     fireEvent.press(loginButton);
 
     expect(Alert.alert).toHaveBeenCalledWith(
-      'Error', 
-      'Please enter both email/username and password.'
+      'Error',
+      'Please enter both email/username and password.',
     );
     expect(login).not.toHaveBeenCalled();
   });
@@ -84,15 +84,15 @@ describe('LoginScreen', () => {
         username: 'testuser',
         first_name: 'John',
         last_name: 'Doe',
-      }
+      },
     };
-    
+
     (login as jest.Mock).mockResolvedValueOnce(mockResponse);
 
     const { getByTestId, getByPlaceholderText } = render(
       <UserContext.Provider value={mockUserContext}>
         <LoginScreen navigation={mockNavigation} />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const identifierInput = getByPlaceholderText('Enter your email or username');
@@ -111,7 +111,7 @@ describe('LoginScreen', () => {
         username: 'testuser',
         firstName: 'John',
         lastName: 'Doe',
-        token: 'test-token'
+        token: 'test-token',
       });
       expect(mockNavigation.navigate).toHaveBeenCalledWith('UserLearnings');
     });
@@ -123,7 +123,7 @@ describe('LoginScreen', () => {
     const { getByTestId, getByPlaceholderText } = render(
       <UserContext.Provider value={mockUserContext}>
         <LoginScreen navigation={mockNavigation} />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const identifierInput = getByPlaceholderText('Enter your email or username');
@@ -136,10 +136,7 @@ describe('LoginScreen', () => {
 
     await waitFor(() => {
       expect(login).toHaveBeenCalledWith('testuser', 'password123');
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Error', 
-        'An error occurred. Please try again.'
-      );
+      expect(Alert.alert).toHaveBeenCalledWith('Error', 'An error occurred. Please try again.');
       expect(mockNavigation.navigate).not.toHaveBeenCalled();
     });
   });
@@ -148,7 +145,7 @@ describe('LoginScreen', () => {
     const { getByText } = render(
       <UserContext.Provider value={mockUserContext}>
         <LoginScreen navigation={mockNavigation} />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const registerLink = getByText("Don't have an account? Create one");
@@ -160,11 +157,11 @@ describe('LoginScreen', () => {
   it('throws an error when UserContext is not provided', () => {
     // Spy on console.error to suppress error messages in test output
     jest.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     expect(() => {
       render(<LoginScreen navigation={mockNavigation} />);
     }).toThrow('UserContext is not set');
-    
+
     // Restore console.error
     (console.error as jest.Mock).mockRestore();
   });

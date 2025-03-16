@@ -7,8 +7,8 @@ import { UserContext } from '../common/UserContext';
 interface LoginScreenProps {
   navigation: {
     navigate: (screen: string) => void;
-  }
-};
+  };
+}
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const userContext = useContext(UserContext);
@@ -29,7 +29,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
     login(identifier, password)
       .then((res: any) => {
-        setUser( {
+        setUser({
           id: res.user_info.id,
           email: res.user_info.email,
           username: res.user_info.username,
@@ -46,7 +46,9 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} testID="login-title">Login</Text>
+      <Text style={styles.title} testID="login-title">
+        Login
+      </Text>
 
       <TextInput
         style={styles.input}
@@ -69,17 +71,12 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.linkButton}
-        onPress={() =>
-          navigation.navigate('Register')
-        }
-      >
+      <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate('Register')}>
         <Text style={styles.linkText}>Don't have an account? Create one</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

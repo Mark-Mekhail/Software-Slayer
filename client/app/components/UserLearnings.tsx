@@ -2,7 +2,13 @@ import { Text, View, StyleSheet, SectionList, TouchableOpacity, TextInput } from
 import { useContext, useEffect, useState } from 'react';
 
 import { UserContext } from '../common/UserContext';
-import { LearningItem, getLearnings, getLearningCategories, createLearning, deleteLearning } from '../requests/learningRequests';
+import {
+  LearningItem,
+  getLearnings,
+  getLearningCategories,
+  createLearning,
+  deleteLearning,
+} from '../requests/learningRequests';
 
 interface LearningSection {
   title: string;
@@ -41,10 +47,10 @@ export default function UserLearnings() {
 
     setIsLoading(true);
     getLearnings(user.id)
-      .then((learningItems) => {
-        const learningSections = learningCategories.map((category) => ({
+      .then(learningItems => {
+        const learningSections = learningCategories.map(category => ({
           title: category,
-          data: learningItems.filter((l) => l.category === category),
+          data: learningItems.filter(l => l.category === category),
         }));
         setLearnings(learningSections);
         setIsLoading(false);
@@ -65,10 +71,10 @@ export default function UserLearnings() {
     createLearning(user.token, title, category)
       .then(() => {
         // Make this more efficient by only fetching the new item
-        getLearnings(user.id).then((learningItems) => {
-          const learningSections = learningCategories.map((category) => ({
+        getLearnings(user.id).then(learningItems => {
+          const learningSections = learningCategories.map(category => ({
             title: category,
-            data: learningItems.filter((l) => l.category === category),
+            data: learningItems.filter(l => l.category === category),
           }));
           setLearnings(learningSections);
         });
@@ -85,11 +91,11 @@ export default function UserLearnings() {
 
     deleteLearning(user.token, id)
       .then(() => {
-        setLearnings((prev) =>
-          prev.map((section) => ({
+        setLearnings(prev =>
+          prev.map(section => ({
             ...section,
-            data: section.data.filter((item) => item.id !== id),
-          }))
+            data: section.data.filter(item => item.id !== id),
+          })),
         );
       })
       .catch(() => {
@@ -98,14 +104,14 @@ export default function UserLearnings() {
   };
 
   const handleInputChange = (category: string, value: string) => {
-    setNewItems((prev) => ({ ...prev, [category]: value }));
+    setNewItems(prev => ({ ...prev, [category]: value }));
   };
 
   const handleAddClick = (category: string) => {
     const newItemTitle = newItems[category]?.trim();
     if (newItemTitle) {
       handleCreateItem(newItemTitle, category);
-      setNewItems((prev) => ({ ...prev, [category]: '' })); // Clear input after adding
+      setNewItems(prev => ({ ...prev, [category]: '' })); // Clear input after adding
     } else {
       alert('Please enter a valid title');
     }
@@ -132,7 +138,7 @@ export default function UserLearnings() {
       <Text style={styles.title}>{user?.firstName}'s Learning Lists</Text>
       <SectionList
         sections={learnings}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.listItem}>
             <Text>{item.title}</Text>
@@ -141,21 +147,18 @@ export default function UserLearnings() {
             </TouchableOpacity>
           </View>
         )}
-        renderSectionHeader={({ section }) => (
-          <Text style={styles.header}>{section.title}</Text>
-        )}
+        renderSectionHeader={({ section }) => <Text style={styles.header}>{section.title}</Text>}
         renderSectionFooter={({ section }) => (
           <View style={styles.footer}>
             <TextInput
               style={styles.input}
               placeholder="Enter learning item title"
               value={newItems[section.title] || ''}
-              onChangeText={(text) => handleInputChange(section.title, text)}
+              onChangeText={text => handleInputChange(section.title, text)}
             />
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => handleAddClick(section.title)}
-            >
+              onPress={() => handleAddClick(section.title)}>
               <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
           </View>

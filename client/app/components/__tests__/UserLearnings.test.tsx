@@ -1,9 +1,13 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { Alert } from 'react-native';
 import UserLearnings from '../UserLearnings';
 import { UserContext } from '../../common/UserContext';
-import { getLearnings, getLearningCategories, createLearning, deleteLearning } from '../../requests/learningRequests';
+import {
+  getLearnings,
+  getLearningCategories,
+  createLearning,
+  deleteLearning,
+} from '../../requests/learningRequests';
 
 // Mock dependencies
 jest.mock('../../requests/learningRequests');
@@ -26,9 +30,13 @@ const mockUserContext = {
 describe('UserLearnings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Default mocks
-    (getLearningCategories as jest.Mock).mockResolvedValue(['Languages', 'Technologies', 'Concepts']);
+    (getLearningCategories as jest.Mock).mockResolvedValue([
+      'Languages',
+      'Technologies',
+      'Concepts',
+    ]);
     (getLearnings as jest.Mock).mockResolvedValue([
       { id: 1, title: 'Go Programming', category: 'Languages' },
       { id: 2, title: 'Docker', category: 'Technologies' },
@@ -40,7 +48,7 @@ describe('UserLearnings', () => {
     const { getByText, getAllByText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     await waitFor(() => {
@@ -65,7 +73,7 @@ describe('UserLearnings', () => {
     const { getByText, queryByText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Wait for all elements to appear using waitFor
@@ -75,7 +83,7 @@ describe('UserLearnings', () => {
       expect(getByText('Technologies')).toBeTruthy();
       expect(getByText('Concepts')).toBeTruthy();
     });
-    
+
     // Then verify that the list items are not present
     expect(queryByText('Go Programming')).toBeNull();
     expect(queryByText('Docker')).toBeNull();
@@ -88,7 +96,7 @@ describe('UserLearnings', () => {
     const { getByText, getAllByText, getAllByPlaceholderText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     await waitFor(() => {
@@ -112,7 +120,7 @@ describe('UserLearnings', () => {
     const { getAllByPlaceholderText, getAllByText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Wait for all necessary elements to appear
@@ -120,7 +128,7 @@ describe('UserLearnings', () => {
       expect(getAllByText('Add').length).toBe(3);
       expect(getAllByPlaceholderText('Enter learning item title').length).toBe(3);
     });
-    
+
     const inputs = getAllByPlaceholderText('Enter learning item title');
     const addButtons = getAllByText('Add');
 
@@ -138,10 +146,10 @@ describe('UserLearnings', () => {
   it('deletes a learning item when delete button is pressed', async () => {
     (deleteLearning as jest.Mock).mockResolvedValueOnce(undefined);
 
-    const { getAllByText, findByText } = render(
+    const { getAllByText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     await waitFor(() => {
@@ -162,7 +170,7 @@ describe('UserLearnings', () => {
     const { getAllByText, getAllByPlaceholderText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Wait for all necessary elements to appear
@@ -170,7 +178,7 @@ describe('UserLearnings', () => {
       expect(getAllByText('Add').length).toBe(3);
       expect(getAllByPlaceholderText('Enter learning item title').length).toBe(3);
     });
-    
+
     const inputs = getAllByPlaceholderText('Enter learning item title');
     const addButtons = getAllByText('Add');
 
@@ -190,14 +198,14 @@ describe('UserLearnings', () => {
     const { getAllByText } = render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Wait for delete buttons to appear
     await waitFor(() => {
       expect(getAllByText('Delete').length).toBe(3);
     });
-    
+
     // Press the first delete button
     fireEvent.press(getAllByText('Delete')[0]);
 
@@ -209,52 +217,54 @@ describe('UserLearnings', () => {
 
   it('handles API failure when fetching categories', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     // Use a string error instead of an object to match the alert message format
-    (getLearningCategories as jest.Mock).mockRejectedValueOnce(new Error('Failed to fetch categories'));
+    (getLearningCategories as jest.Mock).mockRejectedValueOnce(
+      new Error('Failed to fetch categories'),
+    );
 
     render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Just wait for the API call to be made
     await waitFor(() => {
       expect(getLearningCategories).toHaveBeenCalledTimes(1);
     });
-    
+
     consoleErrorSpy.mockRestore();
   });
 
   it('handles API failure when fetching learning items', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     // Use a string error instead of an object to match the alert message format
     (getLearnings as jest.Mock).mockRejectedValueOnce(new Error('Failed to fetch learning items'));
 
     render(
       <UserContext.Provider value={mockUserContext}>
         <UserLearnings />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     // Just wait for the API call to be made
     await waitFor(() => {
       expect(getLearnings).toHaveBeenCalledTimes(1);
     });
-    
+
     consoleErrorSpy.mockRestore();
   });
 
   it('throws an error when UserContext is not provided', () => {
     // Use spyOn instead of direct assignment
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     expect(() => {
       render(<UserLearnings />);
     }).toThrow('UserContext is not set');
-    
+
     // Clean up
     consoleErrorSpy.mockRestore();
   });
