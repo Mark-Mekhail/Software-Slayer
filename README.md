@@ -37,17 +37,7 @@ Software-Slayer is a full-stack application designed to manage user accounts and
    - `mysql_root_password.txt`: Contains the MySQL root password.
    - `jwt_secret.txt`: Contains the JWT secret key.
 
-3. **Start the backend services**:
-
-   Navigate to the `server` directory and run the following command to start the backend services using Docker Compose:
-
-   ```sh
-   docker-compose up
-   ```
-
-   This will start the MySQL database and the Go server.
-
-4. **Install frontend dependencies**:
+3. **Install frontend dependencies**:
 
    Navigate to the `client` directory and run the following command to install the dependencies:
 
@@ -55,12 +45,12 @@ Software-Slayer is a full-stack application designed to manage user accounts and
    npm install
    ```
 
-5. **Start the frontend application**:
+5. **Execute the start script**:
 
-   Run the following command to start the Expo development server:
+   Run the following command to start the application. This will build the Docker images, start the containers, and run the frontend application. The backend API will be available at `http://localhost:8080` and the frontend application will be available on your local machine using Expo.
 
    ```sh
-   npx expo start
+   ./start.sh
    ```
 
    Follow the instructions in the terminal to open the application on an Android emulator, iOS simulator, or a physical device using the Expo Go app.
