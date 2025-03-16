@@ -51,7 +51,6 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
    ```sh
    ./start.sh
-   ./start.sh
    ```
 
    Follow the instructions in the terminal to open the application on an Android emulator, iOS simulator, or a physical device using the Expo Go app.
