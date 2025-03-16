@@ -4,20 +4,15 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"software-slayer/auth"
 	"software-slayer/db"
 	_ "software-slayer/docs"
 	"software-slayer/learnings"
 	"software-slayer/user"
+	"software-slayer/configs"
 
 	httpSwagger "github.com/swaggo/http-swagger"
-)
-
-const (
-	TOKEN_LIFETIME          = time.Hour * 24
-	JWT_SECRET_FILE_ENV_VAR = "JWT_SECRET_FILE"
 )
 
 /*
@@ -41,11 +36,11 @@ func main() {
  * Initialize the auth package with the jwt secret and token lifetime
  */
 func initTokenService() *auth.TokenServiceImpl {
-	jwtSecret, err := os.ReadFile(os.Getenv(JWT_SECRET_FILE_ENV_VAR))
+	jwtSecret, err := os.ReadFile(os.Getenv(configs.JWT_SECRET_FILE_ENV_VAR))
 	if err != nil {
 		log.Fatal("Failed to read jwt secret file")
 	}
-	return auth.NewTokenService(TOKEN_LIFETIME, jwtSecret)
+	return auth.NewTokenService(configs.TOKEN_LIFETIME, jwtSecret)
 }
 
 /*

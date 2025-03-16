@@ -7,10 +7,10 @@ import (
 	"software-slayer/auth"
 )
 
-func FuzzAuthorizeUser(f *testing.F) {
-	durationSeeds := []int64{ int64(time.Hour), int64(time.Minute), int64(3 * time.Second) }
-	secretSeeds := []string{ "s", "secret", "superlongsecretthatkeepsgettinglongerandlonger", "&*(%$#)@)(#*%)}:>?][]|" }
-	userIdSeeds := []int{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 123, 985, 9999999999, 843279 }
+func FuzzGenerateTokenAndAuthorizeUser(f *testing.F) {
+	durationSeeds := []int64{int64(time.Hour), int64(time.Minute), int64(3 * time.Second)}
+	secretSeeds := []string{"s", "secret", "superlongsecretthatkeepsgettinglongerandlonger", "&*(%$#)@)(#*%)}:>?][]|"}
+	userIdSeeds := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 123, 985, 9999999999, 843279}
 
 	for _, duration := range durationSeeds {
 		for _, secret := range secretSeeds {
