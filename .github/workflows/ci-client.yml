@@ -1,0 +1,24 @@
+name: Client CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: npm install --prefix ./client
+
+    - name: Build client
+      run: npm run build --prefix ./client
+      
+    - name: Run tests
+      run: npm test --prefix ./client
