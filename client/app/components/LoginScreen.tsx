@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 
-import { userRequests } from '../requests/userRequests';
+import { login } from '../requests/userRequests';
 import { UserContext } from '../common/UserContext';
 
 interface LoginScreenProps {
@@ -27,7 +27,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       return;
     }
 
-    userRequests.login(identifier, password)
+    login(identifier, password)
       .then((res: any) => {
         setUser( {
           id: res.user_info.id,
@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title} testID="login-title">Login</Text>
 
       <TextInput
         style={styles.input}
@@ -65,7 +65,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} testID="login-button">
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 

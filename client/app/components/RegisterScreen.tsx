@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 
-import { userRequests } from '../requests/userRequests';
+import { createUser } from '../requests/userRequests';
 
 interface RegisterScreenProps {
   navigation: {
@@ -22,7 +22,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       return;
     }
 
-    userRequests.createUser(email, firstName, lastName, username, password)
+    createUser(email, firstName, lastName, username, password)
       .then(() => {
         navigation.navigate('Login');
       })

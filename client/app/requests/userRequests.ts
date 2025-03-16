@@ -50,7 +50,4 @@ async function login(identifier: string, password: string): Promise<object> {
   return response.json();
 }
 
-export const userRequests = {
-  createUser,
-  login,
-};
+export { createUser, login };

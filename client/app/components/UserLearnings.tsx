@@ -19,23 +19,42 @@ export default function UserLearnings() {
   const [learningCategories, setLearningCategories] = useState<string[]>([]);
   const [learnings, setLearnings] = useState<LearningSection[]>([]);
   const [newItems, setNewItems] = useState<Record<string, string>>({}); // Track new item input for each category
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getLearningCategories().then(setLearningCategories);
+    getLearningCategories()
+      .then(categories => {
+        setLearningCategories(categories);
+        setError(null);
+      })
+      .catch(err => {
+        console.error('Failed to fetch categories:', err);
+        setError('Failed to fetch categories');
+      });
   }, []);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || learningCategories.length === 0) {
       return;
     }
 
-    getLearnings(user.id).then((learningItems) => {
-      const learningSections = learningCategories.map((category) => ({
-        title: category,
-        data: learningItems.filter((l) => l.category === category),
-      }));
-      setLearnings(learningSections);
-    });
+    setIsLoading(true);
+    getLearnings(user.id)
+      .then((learningItems) => {
+        const learningSections = learningCategories.map((category) => ({
+          title: category,
+          data: learningItems.filter((l) => l.category === category),
+        }));
+        setLearnings(learningSections);
+        setIsLoading(false);
+        setError(null);
+      })
+      .catch(err => {
+        console.error('Failed to fetch learning items:', err);
+        setIsLoading(false);
+        setError('Failed to fetch learning items');
+      });
   }, [user, learningCategories]);
 
   const handleCreateItem = (title: string, category: string) => {
@@ -91,6 +110,22 @@ export default function UserLearnings() {
       alert('Please enter a valid title');
     }
   };
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (isLoading && learnings.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -185,5 +220,10 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     color: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
