@@ -1,35 +1,35 @@
-import { useState, useContext } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { useState, useContext } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 
-import { userRequests } from '../requests/userRequests';
-import { UserContext } from '../common/UserContext';
+import { UserContext } from "../common/UserContext";
+import { login } from "../requests/userRequests";
 
 interface LoginScreenProps {
   navigation: {
     navigate: (screen: string) => void;
-  }
-};
+  };
+}
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const userContext = useContext(UserContext);
   if (!userContext) {
-    throw new Error('UserContext is not set');
+    throw new Error("UserContext is not set");
   }
 
   const { setUser } = userContext;
 
-  const [identifier, setIdentifier] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [identifier, setIdentifier] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const handleLogin = (): void => {
     if (!identifier || !password) {
-      Alert.alert('Error', 'Please enter both email/username and password.');
+      Alert.alert("Error", "Please enter both email/username and password.");
       return;
     }
 
-    userRequests.login(identifier, password)
+    login(identifier, password)
       .then((res: any) => {
-        setUser( {
+        setUser({
           id: res.user_info.id,
           email: res.user_info.email,
           username: res.user_info.username,
@@ -37,16 +37,18 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           lastName: res.user_info.last_name,
           token: res.token,
         });
-        navigation.navigate('UserLearnings');
+        navigation.navigate("UserLearnings");
       })
       .catch(() => {
-        Alert.alert('Error', 'An error occurred. Please try again.');
+        Alert.alert("Error", "An error occurred. Please try again.");
       });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title} testID="login-title">
+        Login
+      </Text>
 
       <TextInput
         style={styles.input}
@@ -65,61 +67,56 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} testID="login-button">
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.linkButton}
-        onPress={() =>
-          navigation.navigate('Register')
-        }
-      >
+      <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate("Register")}>
         <Text style={styles.linkText}>Don't have an account? Create one</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     padding: 15,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     marginBottom: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   button: {
-    width: '100%',
+    width: "100%",
     padding: 15,
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   linkButton: {
     marginTop: 15,
   },
   linkText: {
-    color: '#007BFF',
-    textDecorationLine: 'underline',
+    color: "#007BFF",
+    textDecorationLine: "underline",
   },
 });

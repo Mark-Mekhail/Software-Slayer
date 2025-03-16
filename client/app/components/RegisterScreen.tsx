@@ -1,33 +1,33 @@
-import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 
-import { userRequests } from '../requests/userRequests';
+import { createUser } from "../requests/userRequests";
 
 interface RegisterScreenProps {
   navigation: {
     navigate: (screen: string) => void;
-  }
-};
+  };
+}
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-  const [email, setEmail] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const handleRegister = () => {
     if (!email || !username || !firstName || !lastName || !password) {
-      Alert.alert('Error', 'Please fill out all fields.');
+      Alert.alert("Error", "Please fill out all fields.");
       return;
     }
 
-    userRequests.createUser(email, firstName, lastName, username, password)
+    createUser(email, firstName, lastName, username, password)
       .then(() => {
-        navigation.navigate('Login');
+        navigation.navigate("Login");
       })
       .catch(() => {
-        Alert.alert('Error', 'An error occurred. Please try again.');
+        Alert.alert("Error", "An error occurred. Please try again.");
       });
   };
 
@@ -77,57 +77,52 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.linkButton}
-        onPress={() =>
-          navigation.navigate('Login')
-        }
-      >
+      <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate("Login")}>
         <Text style={styles.linkText}>Already have an account? Log in</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     padding: 15,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     marginBottom: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   button: {
-    width: '100%',
+    width: "100%",
     padding: 15,
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   linkButton: {
     marginTop: 15,
   },
   linkText: {
-    color: '#007BFF',
-    textDecorationLine: 'underline',
+    color: "#007BFF",
+    textDecorationLine: "underline",
   },
 });

@@ -4,25 +4,32 @@ import (
 	"software-slayer/db"
 )
 
-type LearningsService struct {
+type LearningsService interface {
+	CreateLearning(userId int, title string, category string) error
+	DeleteLearning(id int) error
+	GetLearningsByUserId(userID int) ([]GetLearningResponse, error)
+	GetUserByLearningId(learningId int) (int, error)
+}
+
+type LearningsServiceImpl struct {
 	db *db.Database
 }
 
-func NewLearningsService(db *db.Database) *LearningsService {
-	return &LearningsService{db: db}
+func NewLearningsService(db *db.Database) *LearningsServiceImpl {
+	return &LearningsServiceImpl{db: db}
 }
 
-func (s *LearningsService) CreateLearning(userId int, title string, category string) error {
+func (s *LearningsServiceImpl) CreateLearning(userId int, title string, category string) error {
 	_, err := s.db.Exec("INSERT INTO user_learning_list (user_id, title, category) VALUES (?, ?, ?)", userId, title, category)
 	return err
 }
 
-func (s *LearningsService) DeleteLearning(id int) error {
+func (s *LearningsServiceImpl) DeleteLearning(id int) error {
 	_, err := s.db.Exec("DELETE FROM user_learning_list WHERE id = ?", id)
 	return err
 }
 
-func (s *LearningsService) GetLearningsByUserId(userID int) ([]GetLearningResponse, error) {
+func (s *LearningsServiceImpl) GetLearningsByUserId(userID int) ([]GetLearningResponse, error) {
 	rows, err := s.db.Query("SELECT id, category, title FROM user_learning_list WHERE user_id = ?", userID)
 	if err != nil {
 		return nil, err
@@ -41,7 +48,7 @@ func (s *LearningsService) GetLearningsByUserId(userID int) ([]GetLearningRespon
 	return learnings, nil
 }
 
-func (s *LearningsService) GetUserByLearningId(learningId int) (int, error) {
+func (s *LearningsServiceImpl) GetUserByLearningId(learningId int) (int, error) {
 	var userId int
 	err := s.db.QueryRow("SELECT user_id FROM user_learning_list WHERE id = ?", learningId).Scan(&userId)
 	return userId, err

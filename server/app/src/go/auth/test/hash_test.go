@@ -6,8 +6,8 @@ import (
 	"software-slayer/auth"
 )
 
-func FuzzHashPassword(f *testing.F) {
-	passwordSeeds := []string{ "password", "pass", "p", "verylongpasswordthatjustkeepsgettinglongerandlonger", "78934218057923", "()_*&(*%^&$#(*#)*%$#><?>{L{}})", "" }
+func FuzzHashAndValidatePassword(f *testing.F) {
+	passwordSeeds := []string{"password", "pass", "p", "verylongpasswordthatjustkeepsgettinglongerandlonger", "78934218057923", "()_*&(*%^&$#(*#)*%$#><?>{L{}})", ""}
 	for _, password := range passwordSeeds {
 		f.Add(password)
 	}

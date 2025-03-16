@@ -1,8 +1,14 @@
-import { Text, View, StyleSheet, SectionList, TouchableOpacity, TextInput } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
+import { Text, View, StyleSheet, SectionList, TouchableOpacity, TextInput } from "react-native";
 
-import { UserContext } from '../common/UserContext';
-import { LearningItem, getLearnings, getLearningCategories, createLearning, deleteLearning } from '../requests/learningRequests';
+import { UserContext } from "../common/UserContext";
+import {
+  LearningItem,
+  getLearnings,
+  getLearningCategories,
+  createLearning,
+  deleteLearning,
+} from "../requests/learningRequests";
 
 interface LearningSection {
   title: string;
@@ -12,30 +18,49 @@ interface LearningSection {
 export default function UserLearnings() {
   const userContext = useContext(UserContext);
   if (!userContext) {
-    throw new Error('UserContext is not set');
+    throw new Error("UserContext is not set");
   }
   const { user } = userContext;
 
   const [learningCategories, setLearningCategories] = useState<string[]>([]);
   const [learnings, setLearnings] = useState<LearningSection[]>([]);
   const [newItems, setNewItems] = useState<Record<string, string>>({}); // Track new item input for each category
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getLearningCategories().then(setLearningCategories);
+    getLearningCategories()
+      .then((categories) => {
+        setLearningCategories(categories);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch categories:", err);
+        setError("Failed to fetch categories");
+      });
   }, []);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || learningCategories.length === 0) {
       return;
     }
 
-    getLearnings(user.id).then((learningItems) => {
-      const learningSections = learningCategories.map((category) => ({
-        title: category,
-        data: learningItems.filter((l) => l.category === category),
-      }));
-      setLearnings(learningSections);
-    });
+    setIsLoading(true);
+    getLearnings(user.id)
+      .then((learningItems) => {
+        const learningSections = learningCategories.map((category) => ({
+          title: category,
+          data: learningItems.filter((l) => l.category === category),
+        }));
+        setLearnings(learningSections);
+        setIsLoading(false);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch learning items:", err);
+        setIsLoading(false);
+        setError("Failed to fetch learning items");
+      });
   }, [user, learningCategories]);
 
   const handleCreateItem = (title: string, category: string) => {
@@ -55,7 +80,7 @@ export default function UserLearnings() {
         });
       })
       .catch(() => {
-        alert('Error: Could not create learning item');
+        alert("Error: Could not create learning item");
       });
   };
 
@@ -70,11 +95,11 @@ export default function UserLearnings() {
           prev.map((section) => ({
             ...section,
             data: section.data.filter((item) => item.id !== id),
-          }))
+          })),
         );
       })
       .catch(() => {
-        alert('Error: Could not delete learning item');
+        alert("Error: Could not delete learning item");
       });
   };
 
@@ -86,11 +111,27 @@ export default function UserLearnings() {
     const newItemTitle = newItems[category]?.trim();
     if (newItemTitle) {
       handleCreateItem(newItemTitle, category);
-      setNewItems((prev) => ({ ...prev, [category]: '' })); // Clear input after adding
+      setNewItems((prev) => ({ ...prev, [category]: "" })); // Clear input after adding
     } else {
-      alert('Please enter a valid title');
+      alert("Please enter a valid title");
     }
   };
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (isLoading && learnings.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -106,15 +147,13 @@ export default function UserLearnings() {
             </TouchableOpacity>
           </View>
         )}
-        renderSectionHeader={({ section }) => (
-          <Text style={styles.header}>{section.title}</Text>
-        )}
+        renderSectionHeader={({ section }) => <Text style={styles.header}>{section.title}</Text>}
         renderSectionFooter={({ section }) => (
           <View style={styles.footer}>
             <TextInput
               style={styles.input}
               placeholder="Enter learning item title"
-              value={newItems[section.title] || ''}
+              value={newItems[section.title] || ""}
               onChangeText={(text) => handleInputChange(section.title, text)}
             />
             <TouchableOpacity
@@ -135,40 +174,40 @@ export default function UserLearnings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    flexDirection: 'column',
+    width: "100%",
+    alignItems: "center",
+    flexDirection: "column",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     margin: 20,
   },
   list: {
-    width: '90%',
-    flexDirection: 'column',
+    width: "90%",
+    flexDirection: "column",
   },
   header: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginVertical: 10,
   },
   listItem: {
     paddingVertical: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 10,
   },
   input: {
     flex: 3,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     padding: 5,
     marginRight: 10,
@@ -179,11 +218,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   addButtonText: {
-    color: 'blue',
-    fontWeight: 'bold',
-    textAlign: 'right',
+    color: "blue",
+    fontWeight: "bold",
+    textAlign: "right",
   },
   deleteButton: {
-    color: 'red',
+    color: "red",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
