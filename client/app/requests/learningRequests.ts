@@ -1,4 +1,4 @@
-import { apiRequests } from './apiRequests';
+import { apiRequests } from "./apiRequests";
 
 interface LearningItem {
   id: number;
@@ -16,7 +16,7 @@ interface LearningItem {
  */
 async function createLearning(authToken: string, title: string, category: string): Promise<void> {
   const response = await apiRequests.postRequest(
-    '/learning',
+    "/learning",
     { Authorization: authToken },
     {
       title,
@@ -25,7 +25,7 @@ async function createLearning(authToken: string, title: string, category: string
   );
 
   if (!response.ok) {
-    throw new Error('Failed to add learning item');
+    throw new Error("Failed to add learning item");
   }
 }
 
@@ -40,7 +40,7 @@ async function deleteLearning(authToken: string, id: number): Promise<void> {
   const response = await apiRequests.deleteRequest(`/learning/${id}`, { Authorization: authToken });
 
   if (!response.ok) {
-    throw new Error('Failed to remove learning item');
+    throw new Error("Failed to remove learning item");
   }
 }
 
@@ -53,17 +53,17 @@ async function getLearnings(userId: number): Promise<LearningItem[]> {
   const response = await apiRequests.getRequest(`/learning/${userId}`);
 
   if (!response.ok) {
-    throw new Error('Failed to get learning items');
+    throw new Error("Failed to get learning items");
   }
 
   return response.json();
 }
 
 async function getLearningCategories(): Promise<string[]> {
-  const response = await apiRequests.getRequest('/learning/categories');
+  const response = await apiRequests.getRequest("/learning/categories");
 
   if (!response.ok) {
-    throw new Error('Failed to get learning categories');
+    throw new Error("Failed to get learning categories");
   }
 
   return response.json();

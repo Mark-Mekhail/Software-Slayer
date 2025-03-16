@@ -1,4 +1,4 @@
-import { apiRequests } from './apiRequests';
+import { apiRequests } from "./apiRequests";
 
 /*
  * createUser is a function that makes a POST request to create a new user.
@@ -17,7 +17,7 @@ async function createUser(
   username: string,
   password: string,
 ): Promise<void> {
-  const response = await apiRequests.postRequest('/user', null, {
+  const response = await apiRequests.postRequest("/user", null, {
     email,
     first_name: firstName,
     last_name: lastName,
@@ -26,7 +26,7 @@ async function createUser(
   });
 
   if (!response.ok) {
-    throw new Error('Failed to create user');
+    throw new Error("Failed to create user");
   }
 }
 
@@ -38,13 +38,13 @@ async function createUser(
  * @throws an error if the request fails
  */
 async function login(identifier: string, password: string): Promise<object> {
-  const response = await apiRequests.postRequest('/login', null, {
+  const response = await apiRequests.postRequest("/login", null, {
     identifier,
     password,
   });
 
   if (!response.ok) {
-    throw new Error('Failed to log in');
+    throw new Error("Failed to log in");
   }
 
   return response.json();

@@ -1,14 +1,14 @@
-import { Text, View, StyleSheet, SectionList, TouchableOpacity, TextInput } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
+import { Text, View, StyleSheet, SectionList, TouchableOpacity, TextInput } from "react-native";
 
-import { UserContext } from '../common/UserContext';
+import { UserContext } from "../common/UserContext";
 import {
   LearningItem,
   getLearnings,
   getLearningCategories,
   createLearning,
   deleteLearning,
-} from '../requests/learningRequests';
+} from "../requests/learningRequests";
 
 interface LearningSection {
   title: string;
@@ -18,7 +18,7 @@ interface LearningSection {
 export default function UserLearnings() {
   const userContext = useContext(UserContext);
   if (!userContext) {
-    throw new Error('UserContext is not set');
+    throw new Error("UserContext is not set");
   }
   const { user } = userContext;
 
@@ -30,13 +30,13 @@ export default function UserLearnings() {
 
   useEffect(() => {
     getLearningCategories()
-      .then(categories => {
+      .then((categories) => {
         setLearningCategories(categories);
         setError(null);
       })
-      .catch(err => {
-        console.error('Failed to fetch categories:', err);
-        setError('Failed to fetch categories');
+      .catch((err) => {
+        console.error("Failed to fetch categories:", err);
+        setError("Failed to fetch categories");
       });
   }, []);
 
@@ -47,19 +47,19 @@ export default function UserLearnings() {
 
     setIsLoading(true);
     getLearnings(user.id)
-      .then(learningItems => {
-        const learningSections = learningCategories.map(category => ({
+      .then((learningItems) => {
+        const learningSections = learningCategories.map((category) => ({
           title: category,
-          data: learningItems.filter(l => l.category === category),
+          data: learningItems.filter((l) => l.category === category),
         }));
         setLearnings(learningSections);
         setIsLoading(false);
         setError(null);
       })
-      .catch(err => {
-        console.error('Failed to fetch learning items:', err);
+      .catch((err) => {
+        console.error("Failed to fetch learning items:", err);
         setIsLoading(false);
-        setError('Failed to fetch learning items');
+        setError("Failed to fetch learning items");
       });
   }, [user, learningCategories]);
 
@@ -71,16 +71,16 @@ export default function UserLearnings() {
     createLearning(user.token, title, category)
       .then(() => {
         // Make this more efficient by only fetching the new item
-        getLearnings(user.id).then(learningItems => {
-          const learningSections = learningCategories.map(category => ({
+        getLearnings(user.id).then((learningItems) => {
+          const learningSections = learningCategories.map((category) => ({
             title: category,
-            data: learningItems.filter(l => l.category === category),
+            data: learningItems.filter((l) => l.category === category),
           }));
           setLearnings(learningSections);
         });
       })
       .catch(() => {
-        alert('Error: Could not create learning item');
+        alert("Error: Could not create learning item");
       });
   };
 
@@ -91,29 +91,29 @@ export default function UserLearnings() {
 
     deleteLearning(user.token, id)
       .then(() => {
-        setLearnings(prev =>
-          prev.map(section => ({
+        setLearnings((prev) =>
+          prev.map((section) => ({
             ...section,
-            data: section.data.filter(item => item.id !== id),
+            data: section.data.filter((item) => item.id !== id),
           })),
         );
       })
       .catch(() => {
-        alert('Error: Could not delete learning item');
+        alert("Error: Could not delete learning item");
       });
   };
 
   const handleInputChange = (category: string, value: string) => {
-    setNewItems(prev => ({ ...prev, [category]: value }));
+    setNewItems((prev) => ({ ...prev, [category]: value }));
   };
 
   const handleAddClick = (category: string) => {
     const newItemTitle = newItems[category]?.trim();
     if (newItemTitle) {
       handleCreateItem(newItemTitle, category);
-      setNewItems(prev => ({ ...prev, [category]: '' })); // Clear input after adding
+      setNewItems((prev) => ({ ...prev, [category]: "" })); // Clear input after adding
     } else {
-      alert('Please enter a valid title');
+      alert("Please enter a valid title");
     }
   };
 
@@ -138,7 +138,7 @@ export default function UserLearnings() {
       <Text style={styles.title}>{user?.firstName}'s Learning Lists</Text>
       <SectionList
         sections={learnings}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.listItem}>
             <Text>{item.title}</Text>
@@ -153,12 +153,13 @@ export default function UserLearnings() {
             <TextInput
               style={styles.input}
               placeholder="Enter learning item title"
-              value={newItems[section.title] || ''}
-              onChangeText={text => handleInputChange(section.title, text)}
+              value={newItems[section.title] || ""}
+              onChangeText={(text) => handleInputChange(section.title, text)}
             />
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => handleAddClick(section.title)}>
+              onPress={() => handleAddClick(section.title)}
+            >
               <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
           </View>
@@ -173,40 +174,40 @@ export default function UserLearnings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    flexDirection: 'column',
+    width: "100%",
+    alignItems: "center",
+    flexDirection: "column",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     margin: 20,
   },
   list: {
-    width: '90%',
-    flexDirection: 'column',
+    width: "90%",
+    flexDirection: "column",
   },
   header: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginVertical: 10,
   },
   listItem: {
     paddingVertical: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 10,
   },
   input: {
     flex: 3,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     padding: 5,
     marginRight: 10,
@@ -217,16 +218,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   addButtonText: {
-    color: 'blue',
-    fontWeight: 'bold',
-    textAlign: 'right',
+    color: "blue",
+    fontWeight: "bold",
+    textAlign: "right",
   },
   deleteButton: {
-    color: 'red',
+    color: "red",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
