@@ -11,7 +11,7 @@ import (
 )
 
 var learningsService LearningsService
-var tokenService *auth.TokenServiceImpl
+var tokenService auth.TokenService
 
 // @Summary Create a new learning item
 // @Description Add a new learning item for a user
@@ -121,7 +121,7 @@ func getLearningItemCategories(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(categoriesList)
 }
 
-func InitLearningsRest(_learningsService LearningsService, _tokenService *auth.TokenServiceImpl) {
+func InitLearningsRest(_learningsService LearningsService, _tokenService auth.TokenService) {
 	learningsService = _learningsService
 	tokenService = _tokenService
 
