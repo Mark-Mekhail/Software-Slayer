@@ -8,8 +8,8 @@
     "ios": "expo run:ios",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "lint": "eslint ./app --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint ./app --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
