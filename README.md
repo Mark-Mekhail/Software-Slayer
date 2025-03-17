@@ -4,6 +4,10 @@
 
 Software-Slayer is a full-stack application designed to manage user accounts and their learning items. The application allows users to register, log in, and manage their learning items categorized into different sections. The backend is built using Go, and the frontend is developed using React Native with Expo.
 
+## Demo
+
+A demo of the application can be found [here](https://youtube.com/shorts/Ndh9VpO3ayk).
+
 ## Technologies Used
 
 ### Backend
