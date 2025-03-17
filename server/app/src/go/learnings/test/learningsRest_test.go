@@ -2,6 +2,7 @@ package learnings_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -14,21 +15,21 @@ import (
 
 type MockLearningsService struct{}
 
-func (m *MockLearningsService) CreateLearning(userId int, title string, category string) error {
+func (m *MockLearningsService) CreateLearning(ctx context.Context, userId int, title string, category string) error {
 	if title == "invalid" {
 		return errors.New("invalid title")
 	}
 	return nil
 }
 
-func (m *MockLearningsService) DeleteLearning(id int) error {
+func (m *MockLearningsService) DeleteLearning(ctx context.Context, id int) error {
 	if id == 999 {
 		return errors.New("learning item not found")
 	}
 	return nil
 }
 
-func (m *MockLearningsService) GetLearningsByUserId(userID int) ([]learnings.GetLearningResponse, error) {
+func (m *MockLearningsService) GetLearningsByUserId(ctx context.Context, userID int) ([]learnings.GetLearningResponse, error) {
 	if userID == 999 {
 		return nil, errors.New("user not found")
 	}
@@ -51,7 +52,7 @@ func (m *MockLearningsService) GetLearningsByUserId(userID int) ([]learnings.Get
 	}, nil
 }
 
-func (m *MockLearningsService) GetUserByLearningId(learningId int) (int, error) {
+func (m *MockLearningsService) GetUserByLearningId(ctx context.Context, learningId int) (int, error) {
 	if learningId == 1 {
 		return 1, nil
 	}
@@ -208,8 +209,8 @@ func TestDeleteLearningItemNotFound(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusInternalServerError {
-		t.Errorf("expected %d, got %d", http.StatusInternalServerError, resp.StatusCode)
+	if resp.StatusCode != http.StatusNotFound {
+		t.Errorf("expected %d, got %d", http.StatusNotFound, resp.StatusCode)
 	}
 }
 

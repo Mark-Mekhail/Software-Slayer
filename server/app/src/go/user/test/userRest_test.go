@@ -2,6 +2,7 @@ package user_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -15,18 +16,17 @@ import (
 
 type MockUserService struct{}
 
-func (m *MockUserService) CreateUser(user *user.CreateUserRequest, passwordHash string) error {
+func (m *MockUserService) CreateUser(ctx context.Context, user *user.CreateUserRequest, passwordHash string) error {
 	if user.Email == "invalid" {
 		return errors.New("invalid email")
 	}
 	return nil
 }
 
-func (m *MockUserService) GetUsers() ([]user.GetUserResponse, error) {
+func (m *MockUserService) GetUsers(ctx context.Context) ([]user.GetUserResponse, error) {
 	return []user.GetUserResponse{
 		{
-			ID:
-			1,
+			ID: 1,
 			UserBase: user.UserBase{
 				Username:  "testuser",
 				FirstName: "John",
@@ -36,24 +36,24 @@ func (m *MockUserService) GetUsers() ([]user.GetUserResponse, error) {
 	}, nil
 }
 
-func (m *MockUserService) GetUserByIdentifier(identifier string) (user.UserDB, error) {
+func (m *MockUserService) GetUserByIdentifier(ctx context.Context, identifier string) (user.UserDB, error) {
 	hashedPassword, _ := auth.HashPassword("password123")
 
 	if identifier == "test@example.com" {
 		return user.UserDB{
-			ID: 1,
-			Email: "test@example.com",
+			ID:           1,
+			Email:        "test@example.com",
 			PasswordHash: hashedPassword,
 		}, nil
 	}
 	return user.UserDB{}, errors.New("user not found")
 }
 
-func (m *MockUserService) GetUserById(id int) (user.UserDB, error) {
+func (m *MockUserService) GetUserById(ctx context.Context, id int) (user.UserDB, error) {
 	if id == 1 {
 		return user.UserDB{
-			ID: 1,
-			Email: "test@example.com",
+			ID:           1,
+			Email:        "test@example.com",
 			PasswordHash: "hashedpassword",
 		}, nil
 	}
@@ -111,7 +111,7 @@ func TestCreateUserSuccess(t *testing.T) {
 func TestHandleLoginSuccess(t *testing.T) {
 	requestBody := user.Credentials{
 		Identifier: "test@example.com",
-		Password: "password123",
+		Password:   "password123",
 	}
 	body, _ := json.Marshal(requestBody)
 

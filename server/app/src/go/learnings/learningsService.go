@@ -1,14 +1,16 @@
 package learnings
 
 import (
+	"context"
+
 	"software-slayer/db"
 )
 
 type LearningsService interface {
-	CreateLearning(userId int, title string, category string) error
-	DeleteLearning(id int) error
-	GetLearningsByUserId(userID int) ([]GetLearningResponse, error)
-	GetUserByLearningId(learningId int) (int, error)
+	CreateLearning(ctx context.Context, userId int, title string, category string) error
+	DeleteLearning(ctx context.Context, id int) error
+	GetLearningsByUserId(ctx context.Context, userID int) ([]GetLearningResponse, error)
+	GetUserByLearningId(ctx context.Context, learningId int) (int, error)
 }
 
 type LearningsServiceImpl struct {
@@ -19,18 +21,19 @@ func NewLearningsService(db *db.Database) *LearningsServiceImpl {
 	return &LearningsServiceImpl{db: db}
 }
 
-func (s *LearningsServiceImpl) CreateLearning(userId int, title string, category string) error {
-	_, err := s.db.Exec("INSERT INTO user_learning_list (user_id, title, category) VALUES (?, ?, ?)", userId, title, category)
+func (s *LearningsServiceImpl) CreateLearning(ctx context.Context, userId int, title string, category string) error {
+	_, err := s.db.ExecContext(ctx, "INSERT INTO user_learning_list (user_id, title, category) VALUES (?, ?, ?)",
+		userId, title, category)
 	return err
 }
 
-func (s *LearningsServiceImpl) DeleteLearning(id int) error {
-	_, err := s.db.Exec("DELETE FROM user_learning_list WHERE id = ?", id)
+func (s *LearningsServiceImpl) DeleteLearning(ctx context.Context, id int) error {
+	_, err := s.db.ExecContext(ctx, "DELETE FROM user_learning_list WHERE id = ?", id)
 	return err
 }
 
-func (s *LearningsServiceImpl) GetLearningsByUserId(userID int) ([]GetLearningResponse, error) {
-	rows, err := s.db.Query("SELECT id, category, title FROM user_learning_list WHERE user_id = ?", userID)
+func (s *LearningsServiceImpl) GetLearningsByUserId(ctx context.Context, userID int) ([]GetLearningResponse, error) {
+	rows, err := s.db.QueryContext(ctx, "SELECT id, category, title FROM user_learning_list WHERE user_id = ?", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +51,9 @@ func (s *LearningsServiceImpl) GetLearningsByUserId(userID int) ([]GetLearningRe
 	return learnings, nil
 }
 
-func (s *LearningsServiceImpl) GetUserByLearningId(learningId int) (int, error) {
+func (s *LearningsServiceImpl) GetUserByLearningId(ctx context.Context, learningId int) (int, error) {
 	var userId int
-	err := s.db.QueryRow("SELECT user_id FROM user_learning_list WHERE id = ?", learningId).Scan(&userId)
+	err := s.db.QueryRowContext(ctx, "SELECT user_id FROM user_learning_list WHERE id = ?",
+		learningId).Scan(&userId)
 	return userId, err
 }

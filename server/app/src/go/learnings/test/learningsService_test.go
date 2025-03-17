@@ -1,6 +1,7 @@
 package learnings_test
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"testing"
@@ -29,6 +30,7 @@ func setup(t *testing.T) (sqlmock.Sqlmock, *learnings.LearningsServiceImpl) {
 func TestCreateLearning_Success(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 	title := "Go Programming"
@@ -39,7 +41,7 @@ func TestCreateLearning_Success(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// Execute
-	err := service.CreateLearning(userId, title, category)
+	err := service.CreateLearning(ctx, userId, title, category)
 
 	// Verify
 	assert.NoError(t, err)
@@ -49,6 +51,7 @@ func TestCreateLearning_Success(t *testing.T) {
 func TestCreateLearning_DBError(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 	title := "Go Programming"
@@ -59,7 +62,7 @@ func TestCreateLearning_DBError(t *testing.T) {
 		WillReturnError(errors.New("database error"))
 
 	// Execute
-	err := service.CreateLearning(userId, title, category)
+	err := service.CreateLearning(ctx, userId, title, category)
 
 	// Verify
 	assert.Error(t, err)
@@ -70,6 +73,7 @@ func TestCreateLearning_DBError(t *testing.T) {
 func TestCreateLearning_DuplicateEntry(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 	title := "Go Programming"
@@ -80,7 +84,7 @@ func TestCreateLearning_DuplicateEntry(t *testing.T) {
 		WillReturnError(errors.New("Error 1062: Duplicate entry"))
 
 	// Execute
-	err := service.CreateLearning(userId, title, category)
+	err := service.CreateLearning(ctx, userId, title, category)
 
 	// Verify
 	assert.Error(t, err)
@@ -93,6 +97,7 @@ func TestCreateLearning_DuplicateEntry(t *testing.T) {
 func TestDeleteLearning_Success(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	learningId := 1
 
@@ -101,7 +106,7 @@ func TestDeleteLearning_Success(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	// Execute
-	err := service.DeleteLearning(learningId)
+	err := service.DeleteLearning(ctx, learningId)
 
 	// Verify
 	assert.NoError(t, err)
@@ -111,6 +116,7 @@ func TestDeleteLearning_Success(t *testing.T) {
 func TestDeleteLearning_NotFound(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	learningId := 999
 
@@ -119,7 +125,7 @@ func TestDeleteLearning_NotFound(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 0))
 
 	// Execute
-	err := service.DeleteLearning(learningId)
+	err := service.DeleteLearning(ctx, learningId)
 
 	// Verify - Note: Current implementation doesn't return error for no rows affected
 	// This is a design choice that could be changed if needed
@@ -130,6 +136,7 @@ func TestDeleteLearning_NotFound(t *testing.T) {
 func TestDeleteLearning_DBError(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	learningId := 1
 
@@ -138,7 +145,7 @@ func TestDeleteLearning_DBError(t *testing.T) {
 		WillReturnError(errors.New("database error"))
 
 	// Execute
-	err := service.DeleteLearning(learningId)
+	err := service.DeleteLearning(ctx, learningId)
 
 	// Verify
 	assert.Error(t, err)
@@ -151,6 +158,7 @@ func TestDeleteLearning_DBError(t *testing.T) {
 func TestGetLearningsByUserId_Success(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 	expectedLearnings := []learnings.GetLearningResponse{
@@ -180,7 +188,7 @@ func TestGetLearningsByUserId_Success(t *testing.T) {
 		WillReturnRows(rows)
 
 	// Execute
-	learningItems, err := service.GetLearningsByUserId(userId)
+	learningItems, err := service.GetLearningsByUserId(ctx, userId)
 
 	// Verify
 	assert.NoError(t, err)
@@ -192,6 +200,7 @@ func TestGetLearningsByUserId_Success(t *testing.T) {
 func TestGetLearningsByUserId_NoItems(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 
@@ -202,7 +211,7 @@ func TestGetLearningsByUserId_NoItems(t *testing.T) {
 		WillReturnRows(rows)
 
 	// Execute
-	learningItems, err := service.GetLearningsByUserId(userId)
+	learningItems, err := service.GetLearningsByUserId(ctx, userId)
 
 	// Verify
 	assert.NoError(t, err)
@@ -213,6 +222,7 @@ func TestGetLearningsByUserId_NoItems(t *testing.T) {
 func TestGetLearningsByUserId_DBError(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 
@@ -221,7 +231,7 @@ func TestGetLearningsByUserId_DBError(t *testing.T) {
 		WillReturnError(errors.New("database error"))
 
 	// Execute
-	learningItems, err := service.GetLearningsByUserId(userId)
+	learningItems, err := service.GetLearningsByUserId(ctx, userId)
 
 	// Verify
 	assert.Error(t, err)
@@ -233,6 +243,7 @@ func TestGetLearningsByUserId_DBError(t *testing.T) {
 func TestGetLearningsByUserId_ScanError(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	userId := 1
 
@@ -245,7 +256,7 @@ func TestGetLearningsByUserId_ScanError(t *testing.T) {
 		WillReturnRows(rows)
 
 	// Execute
-	learningItems, err := service.GetLearningsByUserId(userId)
+	learningItems, err := service.GetLearningsByUserId(ctx, userId)
 
 	// Verify
 	assert.Error(t, err)
@@ -258,6 +269,7 @@ func TestGetLearningsByUserId_ScanError(t *testing.T) {
 func TestGetUserByLearningId_Success(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	learningId := 1
 	expectedUserId := 5
@@ -270,7 +282,7 @@ func TestGetUserByLearningId_Success(t *testing.T) {
 		WillReturnRows(rows)
 
 	// Execute
-	userId, err := service.GetUserByLearningId(learningId)
+	userId, err := service.GetUserByLearningId(ctx, learningId)
 
 	// Verify
 	assert.NoError(t, err)
@@ -281,6 +293,7 @@ func TestGetUserByLearningId_Success(t *testing.T) {
 func TestGetUserByLearningId_NotFound(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	learningId := 999
 
@@ -289,7 +302,7 @@ func TestGetUserByLearningId_NotFound(t *testing.T) {
 		WillReturnError(sql.ErrNoRows)
 
 	// Execute
-	userId, err := service.GetUserByLearningId(learningId)
+	userId, err := service.GetUserByLearningId(ctx, learningId)
 
 	// Verify
 	assert.Error(t, err)
@@ -301,6 +314,7 @@ func TestGetUserByLearningId_NotFound(t *testing.T) {
 func TestGetUserByLearningId_DBError(t *testing.T) {
 	// Setup
 	dbMock, service := setup(t)
+	ctx := context.Background()
 
 	learningId := 1
 
@@ -309,7 +323,7 @@ func TestGetUserByLearningId_DBError(t *testing.T) {
 		WillReturnError(errors.New("database error"))
 
 	// Execute
-	userId, err := service.GetUserByLearningId(learningId)
+	userId, err := service.GetUserByLearningId(ctx, learningId)
 
 	// Verify
 	assert.Error(t, err)

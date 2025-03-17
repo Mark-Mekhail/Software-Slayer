@@ -1,6 +1,7 @@
 package user_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -24,6 +25,7 @@ func setup(t *testing.T) (sqlmock.Sqlmock, *user.UserServiceImpl) {
 
 func TestCreateUser(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	user := &user.CreateUserRequest{
 		Email: "user@gmail.com",
@@ -37,7 +39,7 @@ func TestCreateUser(t *testing.T) {
 
 	dbMock.ExpectExec("INSERT INTO users").WithArgs(user.Email, user.Username, passwordHash, user.FirstName, user.LastName).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err := s.CreateUser(user, passwordHash)
+	err := s.CreateUser(ctx, user, passwordHash)
 	if err != nil {
 		t.Error("Expected nil, got ", err)
 	}
@@ -45,6 +47,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestCreateUserError(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	user := &user.CreateUserRequest{
 		Email: "user@gmail.com",
@@ -58,7 +61,7 @@ func TestCreateUserError(t *testing.T) {
 
 	dbMock.ExpectExec("INSERT INTO users").WithArgs(user.Email, user.Username, user.FirstName, user.LastName).WillReturnError(errors.New("error"))
 
-	err := s.CreateUser(user, passwordHash)
+	err := s.CreateUser(ctx, user, passwordHash)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
@@ -66,6 +69,7 @@ func TestCreateUserError(t *testing.T) {
 
 func TestGetUsers(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	users := []user.GetUserResponse{
 		{
@@ -93,7 +97,7 @@ func TestGetUsers(t *testing.T) {
 
 	dbMock.ExpectQuery("SELECT id, username, first_name, last_name FROM users").WillReturnRows(rows)
 
-	res, err := s.GetUsers()
+	res, err := s.GetUsers(ctx)
 	if err != nil {
 		t.Error("Expected nil, got ", err)
 	}
@@ -111,12 +115,13 @@ func TestGetUsers(t *testing.T) {
 
 func TestGetNoUsers(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "first_name", "last_name"})
 
 	dbMock.ExpectQuery("SELECT id, username, first_name, last_name FROM users").WillReturnRows(rows)
 
-	res, err := s.GetUsers()
+	res, err := s.GetUsers(ctx)
 	if err != nil {
 		t.Error("Expected nil, got ", err)
 	}
@@ -128,10 +133,11 @@ func TestGetNoUsers(t *testing.T) {
 
 func TestGetUsersError(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	dbMock.ExpectQuery("SELECT id, username, first_name, last_name FROM users").WillReturnError(errors.New("error"))
 
-	_, err := s.GetUsers()
+	_, err := s.GetUsers(ctx)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
@@ -139,6 +145,7 @@ func TestGetUsersError(t *testing.T) {
 
 func TestGetUserByIdentifier(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	user := user.UserDB{
 		ID: 1,
@@ -155,7 +162,7 @@ func TestGetUserByIdentifier(t *testing.T) {
 	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WithArgs(user.Email, user.Email).WillReturnRows(rows)
 	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WithArgs(user.Username, user.Username).WillReturnRows(rows)
 
-	res, err := s.GetUserByIdentifier(user.Email)
+	res, err := s.GetUserByIdentifier(ctx, user.Email)
 	if err != nil {
 		t.Error("Expected nil, got ", err)
 	}
@@ -166,7 +173,7 @@ func TestGetUserByIdentifier(t *testing.T) {
 
 	rows.AddRow(user.ID, user.Username, user.Email, user.PasswordHash, user.FirstName, user.LastName)
 
-	res, err = s.GetUserByIdentifier(user.Username)
+	res, err = s.GetUserByIdentifier(ctx, user.Username)
 	if err != nil {
 		t.Error("Expected nil, got ", err)
 	}
@@ -178,12 +185,13 @@ func TestGetUserByIdentifier(t *testing.T) {
 
 func TestGetUserByIdentifierNoUser(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "email", "password_hash", "first_name", "last_name"})
 
 	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WillReturnRows(rows)
 
-	_, err := s.GetUserByIdentifier("")
+	_, err := s.GetUserByIdentifier(ctx, "")
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
@@ -191,10 +199,11 @@ func TestGetUserByIdentifierNoUser(t *testing.T) {
 
 func TestGetUserByIdentifierError(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE email = \\? OR username = \\?").WillReturnError(errors.New("error"))
 
-	_, err := s.GetUserByIdentifier("")
+	_, err := s.GetUserByIdentifier(ctx, "")
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
@@ -202,6 +211,7 @@ func TestGetUserByIdentifierError(t *testing.T) {
 
 func TestGetUserById(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	user := user.UserDB{
 		ID: 1,
@@ -217,7 +227,7 @@ func TestGetUserById(t *testing.T) {
 
 	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE id = \\?").WithArgs(user.ID).WillReturnRows(rows)
 
-	res, err := s.GetUserById(user.ID)
+	res, err := s.GetUserById(ctx, user.ID)
 	if err != nil {
 		t.Error("Expected nil, got ", err)
 	}
@@ -229,12 +239,13 @@ func TestGetUserById(t *testing.T) {
 
 func TestGetUserByIdNoUser(t *testing.T) {
 	dbMock, s := setup(t)
+	ctx := context.Background()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "email", "password_hash", "first_name", "last_name"})
 
 	dbMock.ExpectQuery("SELECT id, username, email, password_hash, first_name, last_name FROM users WHERE id = \\?").WillReturnRows(rows)
 
-	_, err := s.GetUserById(1)
+	_, err := s.GetUserById(ctx, 1)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}

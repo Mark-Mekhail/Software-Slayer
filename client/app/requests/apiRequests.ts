@@ -1,59 +1,85 @@
 import { Platform } from "react-native";
 
+/**
+ * Base URL for API requests, adjusted for platform-specific needs
+ * - Android emulator needs 10.0.2.2 to access localhost on host machine
+ * - iOS and web can use localhost directly
+ */
 const BASE_URL = Platform.OS === "android" ? "http://10.0.2.2:8080" : "http://localhost:8080";
 
-/*
- * getRequest is a generic function that makes a GET request to the specified endpoint.
- * @param endpoint: the endpoint to make the request to
- * @param headers: optional headers to include in the request
- * @returns the response from the request
+type Payload = Record<string, string | number | boolean | null>;
+
+/**
+ * Default headers for all requests
  */
-async function getRequest(endpoint: string, headers?: any): Promise<Response> {
-  return await fetch(`${BASE_URL}${endpoint}`, { headers });
+const DEFAULT_HEADERS = {
+  "Content-Type": "application/json",
+  Accept: "application/json",
+};
+
+/**
+ * Makes a GET request to the specified endpoint
+ * @param endpoint - API endpoint path
+ * @param headers - Optional custom headers
+ * @returns Promise with the fetch Response
+ */
+async function getRequest(endpoint: string, headers?: Record<string, string>): Promise<Response> {
+  return await fetch(`${BASE_URL}${endpoint}`, {
+    headers: { ...DEFAULT_HEADERS, ...headers },
+  });
 }
 
-/*
- * postRequest is a generic function that makes a POST request to the specified endpoint.
- * @param endpoint: the endpoint to make the request to
- * @param headers: optional headers to include in the request
- * @param payload: optional payload to include in the request
- * @returns the response from the request
+/**
+ * Makes a POST request to the specified endpoint
+ * @param endpoint - API endpoint path
+ * @param headers - Optional custom headers
+ * @param payload - Optional request body data
+ * @returns Promise with the fetch Response
  */
-async function postRequest(endpoint: string, headers?: any, payload?: any): Promise<Response> {
+async function postRequest(
+  endpoint: string,
+  headers?: Record<string, string>,
+  payload?: Payload,
+): Promise<Response> {
   return await fetch(`${BASE_URL}${endpoint}`, {
     method: "POST",
-    headers: {
-      ...headers,
-    },
+    headers: { ...DEFAULT_HEADERS, ...headers },
     body: JSON.stringify(payload),
   });
 }
 
-/*
- * putRequest is a generic function that makes a PUT request to the specified endpoint.
- * @param endpoint: the endpoint to make the request to
- * @param headers: optional headers to include in the request
- * @param payload: optional payload to include in the request
- * @returns the response from the request
+/**
+ * Makes a PUT request to the specified endpoint
+ * @param endpoint - API endpoint path
+ * @param headers - Optional custom headers
+ * @param payload - Optional request body data
+ * @returns Promise with the fetch Response
  */
-async function putRequest(endpoint: string, headers?: any, payload?: any): Promise<Response> {
+async function putRequest(
+  endpoint: string,
+  headers?: Record<string, string>,
+  payload?: Payload,
+): Promise<Response> {
   return await fetch(`${BASE_URL}${endpoint}`, {
     method: "PUT",
-    headers,
+    headers: { ...DEFAULT_HEADERS, ...headers },
     body: JSON.stringify(payload),
   });
 }
 
-/*
- * deleteRequest is a generic function that makes a DELETE request to the specified endpoint.
- * @param endpoint: the endpoint to make the request to
- * @param headers: optional headers to include in the request
- * @returns the response from the request
+/**
+ * Makes a DELETE request to the specified endpoint
+ * @param endpoint - API endpoint path
+ * @param headers - Optional custom headers
+ * @returns Promise with the fetch Response
  */
-async function deleteRequest(endpoint: string, headers?: any): Promise<Response> {
+async function deleteRequest(
+  endpoint: string,
+  headers?: Record<string, string>,
+): Promise<Response> {
   return await fetch(`${BASE_URL}${endpoint}`, {
     method: "DELETE",
-    headers,
+    headers: { ...DEFAULT_HEADERS, ...headers },
   });
 }
 
