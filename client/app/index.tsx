@@ -1,4 +1,3 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -67,7 +66,8 @@ const RootNavigator = () => {
     );
   }
 
-  return <NavigationContainer>{user ? <AppNavigator /> : <AuthNavigator />}</NavigationContainer>;
+  // Return navigation structure without NavigationContainer
+  return user ? <AppNavigator /> : <AuthNavigator />;
 };
 
 /**

@@ -101,7 +101,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       <ScrollView contentContainerStyle={formStyles.scrollContainer}>
         <View style={formStyles.container}>
           <Text style={formStyles.title} testID="login-title">
-            Welcome Back
+            Welcome
           </Text>
           <Text style={formStyles.subtitle}>Sign in to continue to Software Slayer</Text>
 

@@ -20,13 +20,3 @@ export const mockAlert = () => {
     jest.restoreAllMocks();
   };
 };
-
-// Helper to set up global.alert if tests need it
-export const setupGlobalAlert = () => {
-  if (!global.alert) {
-    global.alert = jest.fn();
-  }
-  return () => {
-    delete global.alert;
-  };
-};

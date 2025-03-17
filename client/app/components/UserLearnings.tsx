@@ -287,7 +287,7 @@ export default function UserLearnings() {
             )}
           </View>
         )}
-        stickySectionHeadersEnabled
+        stickySectionHeadersEnabled={false}
         style={styles.list}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         ListEmptyComponent={
