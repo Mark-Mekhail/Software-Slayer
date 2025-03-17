@@ -27,6 +27,8 @@ Software-Slayer is a full-stack application designed to manage user accounts and
 
 - Docker installed on your machine.
 - Node.js and npm installed on your machine.
+- Expo CLI installed on your machine.
+- An Android emulator, iOS simulator, or a physical device with the Expo Go app installed.
 
 ### Steps
 
@@ -48,12 +50,17 @@ Software-Slayer is a full-stack application designed to manage user accounts and
    npm install
    ```
 
-4. **Execute the start script**:
+4. **Start the server application**:
 
-   Run the following command to start the application. This will build the Docker images, start the containers, and run the frontend application. The backend API will be available at `http://localhost:8080` and the frontend application will be available on your local machine using Expo.
+   Navigate back to the root directory. Run the following command to start the server application. This will build the relevant Docker images and start the application containers. The backend API will be available at `http://localhost:8080`.
 
    ```sh
-   ./start.sh
+   ./scripts/server.sh
    ```
 
-   Follow the instructions in the terminal to open the application on an Android emulator, iOS simulator, or a physical device using the Expo Go app.
+5. **Start the client application**:
+   Run the following command to start the client application on the platform of your choice:
+
+   ```sh
+    ./scripts/client.sh <ios|android>
+    ```
